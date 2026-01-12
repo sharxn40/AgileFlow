@@ -1,0 +1,93 @@
+/* Board Layout */
+.taskboard-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.board-header h1 {
+    font-size: 1.5rem;
+    color: var(--theme-text-main);
+}
+
+.board-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-secondary.small {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.btn-primary.small {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+/* Columns Container */
+.kanban-columns-container {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    flex: 1;
+    padding-bottom: 24px;
+}
+
+.kanban-column {
+    min-width: 280px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    height: 100%;
+}
+
+.column-header-styled {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+.column-header-styled h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--theme-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.item-count {
+    background-color: var(--theme-bg-secondary);
+    color: var(--theme-text-muted);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Droppable Area */
+.column-droppable-area {
+    background-color: var(--theme-bg-secondary);
+    border-radius: 8px;
+    padding: 12px;
+    flex: 1;
+    transition: background-color 0.2s ease;
+    border: 1px dashed transparent;
+}
+
+.column-droppable-area.dragging-over {
+    background-color: rgba(99, 102, 241, 0.05);
+    border-color: var(--theme-primary);
+}

@@ -1,0 +1,111 @@
+.project-card {
+    background-color: var(--theme-bg-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--theme-primary);
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.project-type-badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--theme-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.more-btn {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.project-title {
+    color: var(--theme-text-main);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.project-role {
+    color: var(--theme-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+/* Progress Bar */
+.project-progress-wrapper {
+    margin-bottom: 20px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--theme-text-muted);
+    margin-bottom: 6px;
+}
+
+.progress-bar {
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+/* Footer */
+.project-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.members-stack {
+    display: flex;
+}
+
+.member-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #6366f1;
+    border: 2px solid var(--theme-bg-card);
+    margin-left: -8px;
+}
+
+.member-avatar:first-child {
+    margin-left: 0;
+}
+
+.due-date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--theme-text-muted);
+}
