@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { FaTasks, FaCheckCircle, FaExclamationCircle, FaRegClock, FaPaperclip, FaComment } from 'react-icons/fa';
 import StatCard from '../components/dashboard/StatCard';
 import CreateProjectModal from '../components/dashboard/CreateProjectModal';
+import TaskDetailModal from '../components/dashboard/TaskDetailModal';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: 'Alex' });
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null); // For Task Detail Modal
     const [activeFilter, setActiveFilter] = useState('assigned'); // assigned, completed, pending, overdue
     const [currentTime, setCurrentTime] = useState(Date.now());
 
@@ -110,7 +112,13 @@ const Dashboard = () => {
                                 const countdown = formatCountdown(task.deadline);
 
                                 return (
-                                    <div key={task.id} className={`task-row ${isOverdue ? 'overdue' : ''}`}>
+                                    <div
+                                        key={task.id}
+                                        className={`task-row ${isOverdue ? 'overdue' : ''}`}
+                                        onClick={() => setSelectedTask(task)}
+                                        style={{ cursor: 'pointer' }}
+                                        title={`Created: ${new Date(task.deadline - 86400000).toLocaleDateString()} | Click for details`}
+                                    >
                                         <div className="task-status-indicator" data-status={task.status}></div>
                                         <div className="task-info">
                                             <h3 className="task-title">{task.title}</h3>
@@ -118,7 +126,7 @@ const Dashboard = () => {
                                         </div>
 
                                         <div className="task-execution">
-                                            <div className={`timer-display ${isOverdue ? 'text-danger' : ''}`}>
+                                            <div className={`timer-display ${isOverdue ? 'text-danger' : ''}`} title={`Due: ${new Date(task.deadline).toLocaleString()}`}>
                                                 <FaRegClock /> {task.status === 'Done' ? 'Completed' : countdown}
                                             </div>
                                         </div>
@@ -147,7 +155,10 @@ const Dashboard = () => {
                         </div>
                         <div className="deadline-list">
                             {upcomingDeadlines.map((item, i) => (
-                                <div key={i} className="deadline-item">
+                                <div key={i} className="deadline-item" onClick={() => {
+                                    // Mock opening a task from deadline
+                                    setSelectedTask({ ...myTasks[0], title: item.title, deadline: Date.now() + 3600000 });
+                                }} style={{ cursor: 'pointer' }}>
                                     <div className="time-marker">
                                         <span className="time">{item.time.split(',')[1] || item.time}</span>
                                         <div className="line"></div>
@@ -183,6 +194,12 @@ const Dashboard = () => {
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onCreate={() => { }}
+            />
+
+            <TaskDetailModal
+                isOpen={!!selectedTask}
+                onClose={() => setSelectedTask(null)}
+                task={selectedTask}
             />
         </div>
     );

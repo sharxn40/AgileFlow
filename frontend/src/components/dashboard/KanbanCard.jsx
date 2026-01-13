@@ -13,7 +13,7 @@ const KanbanCard = ({ task, index }) => {
     };
 
     return (
-        <Draggable draggableId={task.id} index={index}>
+        <Draggable draggableId={String(task.id)} index={index}>
             {(provided, snapshot) => (
                 <div
                     className={`kanban-card ${snapshot.isDragging ? 'dragging' : ''}`}

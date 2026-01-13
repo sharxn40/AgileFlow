@@ -55,7 +55,7 @@ const Landing = () => {
             <nav className={`landing-nav ${scrolled ? 'scrolled' : ''}`}>
                 <div className="landing-nav-content">
                     <div className="nav-logo">
-                        <div className="logo-icon"></div>
+                        <img src="/src/assets/logo.png" alt="Logo" style={{ width: '30px', height: '30px', marginRight: '8px' }} />
                         AgileFlow
                     </div>
                     <div className="nav-links">
@@ -172,7 +172,7 @@ const Landing = () => {
                 <div className="footer-content">
                     <div className="footer-col">
                         <div className="nav-logo">
-                            <div className="logo-icon"></div> AgileFlow
+                            <img src="/src/assets/logo.png" alt="Logo" style={{ width: '24px', height: '24px', marginRight: '8px' }} /> AgileFlow
                         </div>
                         <p className="footer-tagline">Built for developers, by developers.</p>
                         <div className="social-links">

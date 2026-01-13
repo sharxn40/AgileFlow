@@ -23,7 +23,7 @@ const Sidebar = () => {
     return (
         <aside className="app-sidebar">
             <div className="sidebar-header">
-                <div className="logo-icon"></div>
+                <img src="/src/assets/logo.png" alt="AgileFlow Logo" className="logo-image" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
                 <h2>AgileFlow</h2>
             </div>
 

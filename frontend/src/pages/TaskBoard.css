@@ -85,6 +85,8 @@
     flex: 1;
     transition: background-color 0.2s ease;
     border: 1px dashed transparent;
+    min-height: 150px;
+    /* Ensure empty columns are droppable */
 }
 
 .column-droppable-area.dragging-over {
