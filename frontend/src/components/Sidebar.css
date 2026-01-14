@@ -1,0 +1,110 @@
+/* Sidebar Container */
+.app-sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: var(--theme-bg-secondary);
+    border-right: 1px solid var(--theme-border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    flex-shrink: 0;
+    z-index: 50;
+    transition: width 0.3s ease;
+}
+
+/* Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 0 12px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--theme-text-main);
+    letter-spacing: -0.02em;
+}
+
+.logo-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--theme-primary);
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+/* Nav Menu */
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--theme-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 16px 12px 8px;
+}
+
+/* Nav Items */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--theme-text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.nav-item:hover {
+    color: var(--theme-text-main);
+    background-color: rgba(255, 255, 255, 0.08);
+    /* More visible hover */
+}
+
+.nav-item.active {
+    background-color: rgba(99, 102, 241, 0.15);
+    /* More visible active state */
+    color: var(--theme-primary);
+    border-color: var(--theme-primary);
+    /* Solid border color */
+}
+
+.nav-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Footer */
+.sidebar-footer {
+    border-top: 1px solid var(--theme-border);
+    padding-top: 16px;
+    margin-top: 16px;
+}
+
+.logout-btn {
+    width: 100%;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--theme-danger);
+    justify-content: flex-start;
+}
+
+.logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--theme-danger);
+}

@@ -1,0 +1,75 @@
+.stat-card {
+    background-color: var(--theme-bg-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    overflow: hidden;
+}
+
+.stat-card.active {
+    border-color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card:hover {
+    border-color: var(--accent-color);
+    cursor: pointer;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.stat-label {
+    color: var(--theme-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-icon-bg {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--theme-text-main);
+    margin-bottom: 8px;
+}
+
+.stat-trend {
+    display: flex;
+    gap: 6px;
+    font-size: 0.8rem;
+    align-items: center;
+}
+
+.stat-trend.positive {
+    color: var(--theme-success);
+}
+
+.stat-trend.negative {
+    color: var(--theme-danger);
+}
+
+.trend-label {
+    color: var(--theme-text-muted);
+}

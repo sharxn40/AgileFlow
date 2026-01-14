@@ -1,0 +1,139 @@
+import React, { useState } from 'react';
+import { FaTimes, FaProjectDiagram, FaCheck } from 'react-icons/fa';
+import './CreateProjectModal.css';
+
+const PROJECT_TYPES = [
+    'SaaS Development',
+    'Mobile App',
+    'Marketing Campaign',
+    'Design System',
+    'Internal Tool',
+    'Other'
+];
+
+const COLORS = [
+    { name: 'Indigo', value: '#6366f1' },
+    { name: 'Emerald', value: '#10b981' },
+    { name: 'Amber', value: '#f59e0b' },
+    { name: 'Rose', value: '#ef4444' },
+    { name: 'Violet', value: '#8b5cf6' },
+    { name: 'Cyan', value: '#06b6d4' }
+];
+
+const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
+    if (!isOpen) return null;
+
+    const [formData, setFormData] = useState({
+        name: '',
+        type: 'SaaS Development',
+        description: '',
+        color: '#6366f1',
+        dueDate: ''
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleColorSelect = (color) => {
+        setFormData({ ...formData, color: color });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!formData.name.trim()) return;
+
+        // Create new project object (mock ID)
+        const newProject = {
+            id: Date.now(),
+            ...formData,
+            role: 'Admin', // Creator is admin
+            progress: 0
+        };
+
+        onCreate(newProject);
+        onClose();
+    };
+
+    return (
+        <div className="modal-overlay">
+            <div className="create-project-modal">
+                <div className="modal-header">
+                    <h2><FaProjectDiagram style={{ marginRight: '10px', color: 'var(--theme-primary)' }} /> Create New Project</h2>
+                    <button className="close-btn" onClick={onClose}><FaTimes /></button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="modal-body">
+                    <div className="form-group">
+                        <label>Project Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            className="form-input"
+                            placeholder="e.g. Q4 Marketing Plan"
+                            value={formData.name}
+                            onChange={handleChange}
+                            autoFocus
+                            required
+                        />
+                    </div>
+
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label>Project Type</label>
+                            <select name="type" className="form-select" value={formData.type} onChange={handleChange}>
+                                {PROJECT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Due Date</label>
+                            <input
+                                type="date"
+                                name="dueDate"
+                                className="form-input"
+                                value={formData.dueDate}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label>Theme Color</label>
+                        <div className="color-picker">
+                            {COLORS.map(c => (
+                                <div
+                                    key={c.value}
+                                    className={`color-option ${formData.color === c.value ? 'selected' : ''}`}
+                                    style={{ backgroundColor: c.value }}
+                                    onClick={() => handleColorSelect(c.value)}
+                                    title={c.name}
+                                >
+                                    {formData.color === c.value && <FaCheck style={{ color: 'white', fontSize: '10px' }} />}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label>Description (Optional)</label>
+                        <textarea
+                            name="description"
+                            className="form-textarea"
+                            rows="3"
+                            placeholder="Brief details about this project..."
+                            value={formData.description}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="modal-actions">
+                        <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+                        <button type="submit" className="btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default CreateProjectModal;

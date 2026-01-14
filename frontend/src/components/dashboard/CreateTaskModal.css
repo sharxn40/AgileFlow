@@ -1,0 +1,167 @@
+/* Inherit overlay logic or define independently if needed */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(9, 30, 66, 0.54);
+    /* Jira-like dim */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.create-task-modal {
+    width: 600px;
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #DFE1E6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    color: #172B4D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #5E6C84;
+}
+
+.close-btn:hover {
+    color: #172B4D;
+}
+
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6B778C;
+    margin-bottom: 6px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #DFE1E6;
+    border-radius: 3px;
+    font-size: 0.95rem;
+    color: #172B4D;
+    background: #FAFBFC;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    background: white;
+    border-color: #4C9AFF;
+    outline: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.priority-selector {
+    display: flex;
+    gap: 12px;
+}
+
+.priority-option {
+    border: 1px solid #DFE1E6;
+    border-radius: 3px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: #FAFBFC;
+    transition: all 0.1s;
+}
+
+.priority-option:hover {
+    background: #EBECF0;
+}
+
+.priority-option.selected {
+    background: #DEEBFF;
+    border: 1px solid #0052CC;
+    /* Fallback if inline style overridden */
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.check-icon {
+    font-size: 0.8rem;
+    margin-left: 4px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-secondary {
+    background: none;
+    border: none;
+    color: #42526E;
+    font-weight: 600;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.btn-secondary:hover {
+    background: rgba(9, 30, 66, 0.08);
+}
+
+.btn-primary {
+    background: #0052CC;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 3px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #0065FF;
+}
