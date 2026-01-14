@@ -7,7 +7,7 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s;
+    overflow: hidden;
 }
 
 .stat-card.active {
@@ -17,7 +17,6 @@
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
     border-color: var(--accent-color);
     cursor: pointer;
 }

@@ -14,7 +14,6 @@ connectDB();
 
 // Sync Database Models
 const User = require('./models/User');
-const Task = require('./models/Task');
 // Force false to avoid dropping data, alter true to update schema
 sequelize.sync({ alter: true }).then(() => {
   console.log('Database Synced');
@@ -25,7 +24,6 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/tasks', require('./routes/taskRoutes'));
 
 app.get('/', (req, res) => {
   res.send('AgileFlow Backend Running');

@@ -41,6 +41,12 @@
     overflow-x: auto;
     flex: 1;
     padding-bottom: 24px;
+    /* Ensure columns align to top */
+    align-items: flex-start;
+    /* Ensure container takes full available height */
+    height: 100%;
+    /* Prevent container itself from scrolling vertically */
+    overflow-y: hidden;
 }
 
 .kanban-column {
@@ -50,6 +56,8 @@
     flex-direction: column;
     background-color: transparent;
     height: 100%;
+    /* Vital for internal scrolling */
+    max-height: 100%;
 }
 
 .column-header-styled {
@@ -86,10 +94,18 @@
     transition: background-color 0.2s ease;
     border: 1px dashed transparent;
     min-height: 150px;
-    /* Ensure empty columns are droppable */
+    /* User fix: Ensure scrolling happens internally */
+    overflow-y: auto;
+    /* 
+       Constrain max-height if flex basis fails, 
+       but reliant on parent height usually works if parent is fixed.
+       Adding a fallback max-height just in case.
+    */
+    max-height: calc(100vh - 200px);
 }
 
 .column-droppable-area.dragging-over {
-    background-color: rgba(99, 102, 241, 0.05);
+    background-color: var(--theme-bg-hover);
     border-color: var(--theme-primary);
+    box-shadow: inset 0 0 0 1px var(--theme-primary);
 }

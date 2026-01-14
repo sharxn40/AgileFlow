@@ -80,14 +80,15 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
     position: relative;
     overflow: hidden;
 }
 
 .task-row:hover {
     border-color: var(--theme-primary);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 

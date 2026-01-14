@@ -6,6 +6,8 @@ import CreateProjectModal from '../components/dashboard/CreateProjectModal';
 import TaskDetailModal from '../components/dashboard/TaskDetailModal';
 import './Dashboard.css';
 
+import { getTasks } from '../utils/taskManager';
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: 'Alex' });
@@ -14,21 +16,25 @@ const Dashboard = () => {
     const [activeFilter, setActiveFilter] = useState('assigned'); // assigned, completed, pending, overdue
     const [currentTime, setCurrentTime] = useState(Date.now());
 
+    // Load tasks from shared storage
+    const [myTasks, setMyTasks] = useState([]);
+
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        setMyTasks(getTasks());
+    }, []);
+
+    useEffect(() => {
+        try {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser && storedUser !== "undefined") {
+                setUser(JSON.parse(storedUser));
+            }
+        } catch (e) {
+            console.error("Failed to parse user data", e);
+            // Optional: localStorage.removeItem('user');
         }
     }, []);
 
-    // Mock Data (Deadlines are set relative to "Now" for demo purposes)
-    const [myTasks] = useState([
-        { id: 101, title: 'Fix Navigation Bug on Mobile', project: 'Mobile App V2', priority: 'High', status: 'In Progress', deadline: Date.now() + 3600000, isActive: true }, // +1 Hour
-        { id: 102, title: 'Write API Documentation', project: 'AgileFlow Platform', priority: 'Medium', status: 'To Do', deadline: Date.now() + 86400000, isActive: false }, // +24 Hours
-        { id: 103, title: 'Update User Profile Modal', project: 'AgileFlow Platform', priority: 'High', status: 'Review', deadline: Date.now() - 7200000, isActive: false }, // -2 Hours (Overdue)
-        { id: 104, title: 'Design System Audit', project: 'Design System', priority: 'Low', status: 'Done', deadline: Date.now() - 172800000, isActive: false }, // Done
-        { id: 105, title: 'Prepare Q4 Marketing Assets', project: 'Marketing Campaign', priority: 'Medium', status: 'To Do', deadline: Date.now() + 604800000, isActive: false }, // +1 Week
-    ]);
 
     // Dynamic Stats Calculation
     const assignedCount = myTasks.filter(t => t.status !== 'Done').length;

@@ -1,141 +1,148 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import KanbanCard from '../components/dashboard/KanbanCard';
+import CreateTaskModal from '../components/dashboard/CreateTaskModal';
 import './TaskBoard.css';
 
+import { getKanbanData, updateTaskStatus, addTask } from '../utils/taskManager';
+
 const TaskBoard = () => {
-    // Columns structure
-    const initialColumns = {
-        todo: { id: 'todo', name: 'To Do', items: [] },
-        inprogress: { id: 'inprogress', name: 'In Progress', items: [] },
-        review: { id: 'review', name: 'Code Review', items: [] },
-        done: { id: 'done', name: 'Done', items: [] }
-    };
-
-    const [columns, setColumns] = useState(initialColumns);
+    const [columns, setColumns] = useState(getKanbanData());
     const [winReady, setWinReady] = useState(false);
-    const [loading, setLoading] = useState(true);
-
-    const API_URL = 'http://localhost:3000/api/tasks';
-
-    // Fetch tasks
-    const fetchTasks = async () => {
-        try {
-            const response = await fetch(API_URL);
-            const tasks = await response.json();
-
-            // Distribute tasks into columns
-            const newColumns = { ...initialColumns };
-            // Reset items to avoid duplication if re-fetching
-            Object.keys(newColumns).forEach(key => newColumns[key].items = []);
-
-            tasks.forEach(task => {
-                // Ensure status matches column keys (lowercase, no spaces)
-                const statusKey = task.status ? task.status.toLowerCase().replace(' ', '') : 'todo';
-                if (newColumns[statusKey]) {
-                    newColumns[statusKey].items.push({
-                        id: String(task.id), // Ensure ID is string for dnd
-                        content: task.title,
-                        priority: task.priority,
-                        assignee: task.assigneeId || 'Unassigned',
-                        tag: 'General', // Default tag for now
-                        comments: 0,
-                        attachments: 0
-                    });
-                }
-            });
-            setColumns(newColumns);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching tasks:', error);
-            setLoading(false);
-        }
-    };
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     useEffect(() => {
         setWinReady(true);
-        fetchTasks();
+        // Refresh data on mount to catch updates from Dashboard
+        setColumns(getKanbanData());
     }, []);
 
-    const onDragEnd = async (result) => {
+    const onDragEnd = (result) => {
         if (!result.destination) return;
         const { source, destination } = result;
 
-        // Optimistic UI Update
-        const sourceColumn = columns[source.droppableId];
-        const destColumn = columns[destination.droppableId];
-        const sourceItems = [...sourceColumn.items];
-        const destItems = [...destColumn.items];
-        const [removed] = sourceItems.splice(source.index, 1);
+        // Optimistic update for UI smoothness
+        if (source.droppableId !== destination.droppableId) {
+            const sourceColumn = columns[source.droppableId];
+            const destColumn = columns[destination.droppableId];
+            const sourceItems = [...sourceColumn.items];
+            const destItems = [...destColumn.items];
+            const [removed] = sourceItems.splice(source.index, 1);
+            destItems.splice(destination.index, 0, removed);
 
-        if (source.droppableId === destination.droppableId) {
-            destItems.splice(destination.index, 0, removed);
-            setColumns({
-                ...columns,
-                [source.droppableId]: { ...sourceColumn, items: destItems }
-            });
-        } else {
-            destItems.splice(destination.index, 0, removed);
             setColumns({
                 ...columns,
                 [source.droppableId]: { ...sourceColumn, items: sourceItems },
                 [destination.droppableId]: { ...destColumn, items: destItems }
             });
 
-            // API Call to update status
-            try {
-                await fetch(`${API_URL}/${removed.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: destination.droppableId })
-                });
-            } catch (error) {
-                console.error('Error updating task status:', error);
-                // Revert or notify user (skipped for brevity)
-            }
-        }
-    };
+            // Persist change
+            // Map column ID back to status string
+            let newStatus = 'To Do';
+            if (destination.droppableId === 'inprogress') newStatus = 'In Progress';
+            if (destination.droppableId === 'review') newStatus = 'Code Review';
+            if (destination.droppableId === 'done') newStatus = 'Done';
 
-    const handleCreateTask = async () => {
-        const title = prompt('Enter task title:');
-        if (!title) return;
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title,
-                    status: 'todo',
-                    priority: 'Medium',
-                    description: '',
-                    assigneeId: 'Me'
-                })
+            updateTaskStatus(removed.id, newStatus);
+        } else {
+            // Reordering within same column (not persisted in simple manager, purely visual le)
+            const column = columns[source.droppableId];
+            const copiedItems = [...column.items];
+            const [removed] = copiedItems.splice(source.index, 1);
+            copiedItems.splice(destination.index, 0, removed);
+            setColumns({
+                ...columns,
+                [source.droppableId]: { ...column, items: copiedItems }
             });
-
-            if (response.ok) {
-                fetchTasks(); // Refresh board
-            }
-        } catch (error) {
-            console.error('Error creating task:', error);
         }
     };
 
-    if (!winReady) return null;
+    const handleCreateTaskClick = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    const handleSaveTask = (taskData) => {
+        const newTask = addTask({
+            title: taskData.title,
+            content: taskData.title,
+            priority: taskData.priority,
+            assignee: taskData.assignee || 'Unassigned',
+            tag: taskData.tag || 'General',
+            comments: 0,
+            attachments: 0
+        });
+
+        // Refresh board
+        setColumns(getKanbanData());
+        setIsCreateModalOpen(false);
+    };
+
+    if (!winReady) return null; // Prevent hydration mismatch
+
+    const handleMoveTask = (taskId, direction) => {
+        // direction: -1 for left, 1 for right
+        const columnKeys = Object.keys(columns);
+        // Find which column the task is in
+        let sourceColKey = null;
+        let taskIndex = -1;
+
+        for (const key of columnKeys) {
+            const index = columns[key].items.findIndex(t => t.id === taskId);
+            if (index !== -1) {
+                sourceColKey = key;
+                taskIndex = index;
+                break;
+            }
+        }
+
+        if (!sourceColKey) return;
+
+        const currentColIndex = columnKeys.indexOf(sourceColKey);
+        const targetColIndex = currentColIndex + direction;
+
+        // Check bounds
+        if (targetColIndex < 0 || targetColIndex >= columnKeys.length) return;
+
+        const targetColKey = columnKeys[targetColIndex];
+
+        // Optimistic update similar to onDragEnd
+        const sourceColumn = columns[sourceColKey];
+        const destColumn = columns[targetColKey];
+
+        const sourceItems = [...sourceColumn.items];
+        const destItems = [...destColumn.items];
+
+        const [movedTask] = sourceItems.splice(taskIndex, 1);
+        destItems.push(movedTask); // Add to end of target column
+
+        setColumns({
+            ...columns,
+            [sourceColKey]: { ...sourceColumn, items: sourceItems },
+            [targetColKey]: { ...destColumn, items: destItems }
+        });
+
+        // status mapping for persistence
+        let newStatus = 'To Do';
+        if (targetColKey === 'inprogress') newStatus = 'In Progress';
+        if (targetColKey === 'review') newStatus = 'Code Review';
+        if (targetColKey === 'done') newStatus = 'Done';
+
+        updateTaskStatus(movedTask.id, newStatus);
+    };
 
     return (
         <div className="taskboard-page">
             <div className="board-header">
                 <h1>Kanban Board</h1>
                 <div className="board-actions">
-                    <button className="btn-secondary small" onClick={fetchTasks}>Refresh</button>
-                    <button className="btn-primary small" onClick={handleCreateTask}>New Issue</button>
+                    <button className="btn-secondary small">Filter</button>
+                    <button className="btn-primary small" onClick={handleCreateTaskClick}>New Issue</button>
                 </div>
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="kanban-columns-container">
-                    {Object.entries(columns).map(([columnId, column]) => (
+                    {Object.entries(columns).map(([columnId, column], colIndex) => (
                         <div className="kanban-column" key={columnId}>
                             <div className="column-header-styled">
                                 <h2>{column.name}</h2>
@@ -149,7 +156,14 @@ const TaskBoard = () => {
                                         ref={provided.innerRef}
                                     >
                                         {column.items.map((item, index) => (
-                                            <KanbanCard key={item.id} task={item} index={index} />
+                                            <KanbanCard
+                                                key={item.id}
+                                                task={item}
+                                                index={index}
+                                                onMove={handleMoveTask}
+                                                showLeft={colIndex > 0}
+                                                showRight={colIndex < Object.keys(columns).length - 1}
+                                            />
                                         ))}
                                         {provided.placeholder}
                                     </div>
@@ -159,6 +173,12 @@ const TaskBoard = () => {
                     ))}
                 </div>
             </DragDropContext>
+
+            <CreateTaskModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreate={handleSaveTask}
+            />
         </div>
     );
 };
