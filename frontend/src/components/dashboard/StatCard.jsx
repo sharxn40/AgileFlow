@@ -5,8 +5,8 @@ const StatCard = ({ icon, label, value, trend, color, onClick, isActive }) => {
     return (
         <div
             className={`stat-card ${isActive ? 'active' : ''}`}
-            style={{ '--accent-color': color }}
             onClick={onClick}
+            style={{ '--card-accent': color }} // Using a variable we can use in CSS if needed, though mostly using theme vars now
         >
             <div className="stat-header">
                 <span className="stat-label">{label}</span>
@@ -16,8 +16,8 @@ const StatCard = ({ icon, label, value, trend, color, onClick, isActive }) => {
             </div>
             <div className="stat-value">{value}</div>
 
-            {trend && (
-                <div className={`stat-trend ${trend > 0 ? 'positive' : 'negative'}`}>
+            {trend !== undefined && (
+                <div className={`stat-trend ${trend >= 0 ? 'positive' : 'negative'}`}>
                     <span>{trend > 0 ? '+' : ''}{trend}%</span>
                     <span className="trend-label">from last week</span>
                 </div>

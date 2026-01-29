@@ -85,7 +85,7 @@ const ProfileModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                 <div
                     className="profile-header"
                     style={{
-                        backgroundImage: formData.banner ? `url(${formData.banner})` : 'linear-gradient(135deg, #1e212b 0%, #0f111a 100%)',
+                        backgroundImage: formData.banner ? `url(${formData.banner})` : 'linear-gradient(135deg, #4f46e5 0%, #818cf8 100%)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }}
@@ -182,20 +182,20 @@ const ProfileModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                     <input type="password" placeholder="Confirm new password" disabled={!isEditing} className="form-input" />
                                 </div>
                             </div>
-                            <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                                <h4 style={{ color: '#ef4444', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="security-alert">
+                                <h4>
                                     <FaLock /> Two-Factor Authentication
                                 </h4>
-                                <p style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted)' }}>
+                                <p>
                                     Protect your account with an extra layer of security. <br />
-                                    <span style={{ fontWeight: '600', color: 'var(--theme-text-main)' }}>Status: Disabled</span>
+                                    <span>Status: Disabled</span>
                                 </p>
                             </div>
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
@@ -212,9 +212,9 @@ const FormGroup = ({ label, value, name, onChange, isEditing, icon }) => (
                 className="form-input"
             />
         ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                {icon && <span style={{ color: 'var(--theme-text-muted)' }}>{icon}</span>}
-                <span style={{ color: 'var(--theme-text-main)', fontSize: '1rem' }}>{value || 'Not specified'}</span>
+            <div className="form-value-display">
+                {icon && <span className="icon">{icon}</span>}
+                <span className="value">{value || 'Not specified'}</span>
             </div>
         )}
     </div>

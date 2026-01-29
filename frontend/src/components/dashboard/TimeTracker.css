@@ -1,0 +1,90 @@
+.time-tracker-container {
+    background: #FAFBFC;
+    border: 1px solid #DFE1E6;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.time-tracker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.time-tracker-header h3 {
+    font-size: 0.9rem;
+    color: #42526E;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: #EBECF0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #0052CC;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.time-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #172B4D;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #5E6C84;
+}
+
+.time-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group.small input {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #0052CC;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}

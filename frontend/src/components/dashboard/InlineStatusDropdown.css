@@ -1,0 +1,84 @@
+.inline-status-container {
+    position: relative;
+    display: inline-block;
+}
+
+.status-badge {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.status-badge.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.status-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #DFE1E6;
+    min-width: 140px;
+    z-index: 1000;
+    padding: 4px 0;
+    animation: fadeIn 0.1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.status-option {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #172B4D;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.status-option:hover {
+    background: #F4F5F7;
+}
+
+.status-option.active {
+    background: #E6F0FF;
+    color: #0052CC;
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.to-do {
+    background: #42526E;
+}
+
+.status-dot.in-progress {
+    background: #0052CC;
+}
+
+.status-dot.review {
+    background: #6554C0;
+}
+
+.status-dot.done {
+    background: #36B37E;
+}

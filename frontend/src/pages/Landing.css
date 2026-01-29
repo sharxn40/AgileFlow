@@ -1441,3 +1441,445 @@ body {
         justify-content: center;
     }
 }
+
+/* --- Premium Animations & Motion Design --- */
+
+:root {
+    /* Premium Easing */
+    --ease-premium: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --transition-slow: 0.6s var(--ease-premium);
+}
+
+/* 1. Hero Text Entrance (Staggered) */
+.hero-enter {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: heroFadeUp 1s var(--ease-premium) forwards;
+}
+
+@keyframes heroFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-enter-1 {
+    animation-delay: 0.1s;
+}
+
+.hero-enter-2 {
+    animation-delay: 0.25s;
+}
+
+.hero-enter-3 {
+    animation-delay: 0.4s;
+}
+
+.hero-enter-4 {
+    animation-delay: 0.6s;
+}
+
+/* 2. Scroll Reveal Utility */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    transition: opacity 1s var(--ease-premium), transform 1s var(--ease-premium);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.features-grid .reveal-on-scroll:nth-child(1) {
+    transition-delay: 0ms;
+}
+
+.features-grid .reveal-on-scroll:nth-child(2) {
+    transition-delay: 150ms;
+}
+
+.features-grid .reveal-on-scroll:nth-child(3) {
+    transition-delay: 300ms;
+}
+
+/* 3. Enhanced Micro-interactions & Card Visuals */
+.glass-card {
+    transition: transform var(--transition-slow), box-shadow var(--transition-slow), border-color var(--transition-slow);
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 80px;
+    /* Space for visuals */
+}
+
+.glass-card:hover {
+    transform: translateY(-6px) scale(1.005);
+    box-shadow: 0 30px 60px -15px rgba(91, 108, 249, 0.15), 0 0 0 1px var(--accent-glow);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.glass-card .feature-icon-wrapper {
+    transition: transform 0.5s var(--ease-premium), background 0.3s ease;
+}
+
+.glass-card:hover .feature-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    background: var(--accent-primary);
+    color: white;
+}
+
+/* --- Card Visuals --- */
+.card-visual {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.03), transparent);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity var(--transition-slow), transform var(--transition-slow);
+    transform: translateY(10px);
+}
+
+.glass-card:hover .card-visual {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Visual 1: Mini Kanban */
+.visual-kanban {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    padding-bottom: 20px;
+}
+
+.vk-col {
+    width: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px;
+}
+
+.vk-col:nth-child(1) {
+    height: 60px;
+}
+
+.vk-col:nth-child(2) {
+    height: 80px;
+}
+
+.vk-col:nth-child(3) {
+    height: 50px;
+}
+
+.vk-item {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.vk-item.active {
+    background: var(--accent-primary);
+}
+
+/* Visual 2: Avatar Stack */
+.visual-collab {
+    display: flex;
+    align-items: center;
+    gap: -10px;
+}
+
+.vc-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-deep);
+    background: #333;
+    position: relative;
+    margin-left: -10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.vc-avatar:nth-child(1) {
+    background: #FF5F57;
+    z-index: 3;
+}
+
+.vc-avatar:nth-child(2) {
+    background: #FEBC2E;
+    z-index: 2;
+}
+
+.vc-avatar:nth-child(3) {
+    background: #28C840;
+    z-index: 1;
+}
+
+.vc-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--bg-deep);
+}
+
+/* Visual 3: Chart */
+.visual-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 50px;
+}
+
+.v-bar {
+    width: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px 2px 0 0;
+    transition: height 1s var(--ease-premium);
+}
+
+.glass-card:hover .v-bar:nth-child(1) {
+    height: 30px;
+}
+
+.glass-card:hover .v-bar:nth-child(2) {
+    height: 45px;
+    background: var(--accent-secondary);
+}
+
+.glass-card:hover .v-bar:nth-child(3) {
+    height: 25px;
+}
+
+.glass-card:hover .v-bar:nth-child(4) {
+    height: 50px;
+    background: var(--accent-primary);
+}
+
+.glass-card:hover .v-bar:nth-child(5) {
+    height: 35px;
+}
+
+/* --- New Sections: Mission & About --- */
+.landing-mission,
+.landing-about {
+    padding: 100px 5%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    background: transparent;
+}
+
+.mission-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 80px;
+}
+
+.mission-intro {
+    font-size: 1.2rem;
+    color: var(--accent-secondary);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: block;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.mission-title {
+    font-size: 3rem;
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme='light'] .mission-title {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #000;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.metric-card {
+    text-align: center;
+    padding: 40px 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.6s var(--ease-premium);
+}
+
+.metric-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='light'] .metric-card {
+    background: #f9fafb;
+    border-color: #eee;
+}
+
+.metric-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    display: block;
+    margin-bottom: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.metric-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.about-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+/* Visual Fix: Renamed class & Forced Dark */
+.landing-about-visual {
+    position: relative;
+    height: 400px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03) !important;
+    /* Force Dark */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-theme='light'] .landing-about-visual {
+    background: #f0f0f0 !important;
+    border-color: #ddd;
+}
+
+.blueprint-line {
+    position: absolute;
+    background: var(--accent-primary);
+    opacity: 0.3;
+}
+
+.bl-1 {
+    top: 20%;
+    left: 0;
+    width: 0;
+    height: 1px;
+    transition: width 1.5s ease-out 0.2s;
+}
+
+.bl-2 {
+    top: 0;
+    right: 20%;
+    width: 1px;
+    height: 0;
+    transition: height 1.5s ease-out 0.4s;
+}
+
+.bl-3 {
+    bottom: 30%;
+    right: 0;
+    width: 0;
+    height: 1px;
+    transition: width 1.5s ease-out 0.6s;
+}
+
+.bl-4 {
+    bottom: 0;
+    left: 30%;
+    width: 1px;
+    height: 0;
+    transition: height 1.5s ease-out 0.8s;
+}
+
+.reveal-on-scroll.is-visible .bl-1,
+.reveal-on-scroll.is-visible .bl-3 {
+    width: 100%;
+}
+
+.reveal-on-scroll.is-visible .bl-2,
+.reveal-on-scroll.is-visible .bl-4 {
+    height: 100%;
+}
+
+.about-symbol {
+    font-size: 6rem;
+    color: var(--accent-secondary);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 1s var(--ease-premium) 1s;
+}
+
+.reveal-on-scroll.is-visible .about-symbol {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (max-width: 900px) {
+
+    .metrics-grid,
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .landing-about-visual {
+        order: -1;
+        height: 300px;
+    }
+}

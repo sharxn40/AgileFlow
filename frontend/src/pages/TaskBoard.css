@@ -3,6 +3,10 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: transparent;
+    /* inherit from layout */
+    overflow: hidden;
+    /* Prevent double scrollbars */
 }
 
 .board-header {
@@ -37,6 +41,8 @@
 /* Columns Container */
 .kanban-columns-container {
     display: flex;
+    flex-direction: row;
+    /* Explicitly set row */
     gap: 24px;
     overflow-x: auto;
     flex: 1;
@@ -47,6 +53,7 @@
     height: 100%;
     /* Prevent container itself from scrolling vertically */
     overflow-y: hidden;
+    width: 100%;
 }
 
 .kanban-column {
@@ -62,10 +69,13 @@
 
 .column-header-styled {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-    padding: 0 4px;
+    padding: 10px;
+    background: #f4f5f7;
+    border-radius: 4px;
 }
 
 .column-header-styled h2 {
@@ -77,12 +87,17 @@
 }
 
 .item-count {
-    background-color: var(--theme-bg-secondary);
-    color: var(--theme-text-muted);
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    background-color: #EBECF0;
+    color: #42526E;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 0.8rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
 /* Droppable Area */
@@ -101,11 +116,59 @@
        but reliant on parent height usually works if parent is fixed.
        Adding a fallback max-height just in case.
     */
-    max-height: calc(100vh - 200px);
+    /* Ensure full height available */
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    /* Soften background */
+    background-color: #F4F5F7;
 }
 
+/* Jira-like Drop Target Highlight */
 .column-droppable-area.dragging-over {
+    background-color: #E3FCEF;
+    /* Light Green Tint (Jira style success) or lighter blue */
+    border: 2px dashed #36B37E;
+    box-shadow: none;
+}
+
+/* Filter Dropdown */
+.filter-container {
+    position: relative;
+}
+
+.filter-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    /* Align right to avoid overflow */
+    margin-top: 8px;
+    background-color: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    min-width: 150px;
+    overflow: hidden;
+    padding: 4px 0;
+}
+
+.filter-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--theme-text-main);
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-option:hover {
     background-color: var(--theme-bg-hover);
-    border-color: var(--theme-primary);
-    box-shadow: inset 0 0 0 1px var(--theme-primary);
+}
+
+.filter-option.active {
+    background-color: var(--theme-primary-transparent);
+    color: var(--theme-primary);
+    font-weight: 500;
 }

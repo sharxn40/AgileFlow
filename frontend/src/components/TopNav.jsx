@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { MdSearch, MdNotificationsNone, MdHelpOutline, MdExpandMore } from 'react-icons/md';
+import { MdSearch, MdNotificationsNone, MdHelpOutline, MdExpandMore, MdMenu } from 'react-icons/md';
 import ProfileModal from './ProfileModal';
+import NotificationBell from './NotificationBell';
 import './TopNav.css';
 
-const TopNav = () => {
+const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'overview', onViewChange }) => {
     const [user, setUser] = useState({ username: 'User', picture: '' });
     const [activeDropdown, setActiveDropdown] = useState(null); // 'help', 'notifications', or null
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -42,9 +43,6 @@ const TopNav = () => {
         }
     };
 
-    // Close dropdowns when clicking outside (handled by simple overlay or specialized hook, mostly overlay for now or just toggle)
-    // For simplicity in this iteration, we rely on toggle.
-
     const notifications = [
         { id: 1, text: "Task 'Design System' is overdue", time: "2m ago", read: false },
         { id: 2, text: "New comment from Sarah", time: "1h ago", read: true },
@@ -59,12 +57,41 @@ const TopNav = () => {
 
     return (
         <header className="app-topnav">
+            <div className="topnav-center-nav">
+                <button
+                    className={`nav-pill ${currentView === 'overview' ? 'active' : ''}`}
+                    onClick={() => onViewChange && onViewChange('overview')}
+                >
+                    Overview
+                </button>
+                <button
+                    className={`nav-pill ${currentView === 'board' ? 'active' : ''}`}
+                    onClick={() => onViewChange && onViewChange('board')}
+                >
+                    Board
+                </button>
+                <button
+                    className={`nav-pill ${currentView === 'analytics' ? 'active' : ''}`}
+                    onClick={() => onViewChange && onViewChange('analytics')}
+                >
+                    Analytics
+                </button>
+                <button
+                    className={`nav-pill ${currentView === 'backlog' ? 'active' : ''}`}
+                    onClick={() => onViewChange && onViewChange('backlog')}
+                >
+                    Sprints
+                </button>
+            </div>
+
             <div className="topnav-search-wrapper">
                 <MdSearch className="search-icon" />
                 <input
                     type="text"
                     className="topnav-search-input"
                     placeholder="Search tasks, projects, people..."
+                    value={searchTerm}
+                    onChange={(e) => onSearchChange(e.target.value)}
                 />
             </div>
 
@@ -87,26 +114,7 @@ const TopNav = () => {
                 </div>
 
                 <div className="action-wrapper">
-                    <button
-                        className={`icon-btn ${activeDropdown === 'notifications' ? 'active' : ''}`}
-                        title="Notifications"
-                        onClick={() => toggleDropdown('notifications')}
-                    >
-                        <MdNotificationsNone />
-                        <span className="notif-badge"></span>
-                    </button>
-                    {activeDropdown === 'notifications' && (
-                        <div className="dropdown-menu notif-menu">
-                            <div className="dropdown-header">Notifications</div>
-                            {notifications.map(notif => (
-                                <div key={notif.id} className={`dropdown-item notif-item ${notif.read ? '' : 'unread'}`}>
-                                    <p>{notif.text}</p>
-                                    <span>{notif.time}</span>
-                                </div>
-                            ))}
-                            <div className="dropdown-footer">View All</div>
-                        </div>
-                    )}
+                    <NotificationBell />
                 </div>
 
                 <div className="divider-vertical"></div>

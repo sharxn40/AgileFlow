@@ -1,183 +1,321 @@
 import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { useOutletContext, useParams } from 'react-router-dom';
 import KanbanCard from '../components/dashboard/KanbanCard';
 import CreateTaskModal from '../components/dashboard/CreateTaskModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import './TaskBoard.css';
 
-import { getKanbanData, updateTaskStatus, addTask } from '../utils/taskManager';
-
 const TaskBoard = () => {
-    const [columns, setColumns] = useState(getKanbanData());
-    const [winReady, setWinReady] = useState(false);
+    const { projectId } = useParams();
+    const [columns, setColumns] = useState({});
+    const [boardData, setBoardData] = useState(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        setWinReady(true);
-        // Refresh data on mount to catch updates from Dashboard
-        setColumns(getKanbanData());
-    }, []);
+    // Filter states
+    const { searchTerm } = useOutletContext() || {};
+    const [activeFilter, setActiveFilter] = useState('All');
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const onDragEnd = (result) => {
-        if (!result.destination) return;
-        const { source, destination } = result;
+    // Delete states
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
-        // Optimistic update for UI smoothness
-        if (source.droppableId !== destination.droppableId) {
-            const sourceColumn = columns[source.droppableId];
-            const destColumn = columns[destination.droppableId];
-            const sourceItems = [...sourceColumn.items];
-            const destItems = [...destColumn.items];
-            const [removed] = sourceItems.splice(source.index, 1);
-            destItems.splice(destination.index, 0, removed);
-
-            setColumns({
-                ...columns,
-                [source.droppableId]: { ...sourceColumn, items: sourceItems },
-                [destination.droppableId]: { ...destColumn, items: destItems }
+    const fetchBoard = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            // Fetch from new Project Board API
+            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/board`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
-
-            // Persist change
-            // Map column ID back to status string
-            let newStatus = 'To Do';
-            if (destination.droppableId === 'inprogress') newStatus = 'In Progress';
-            if (destination.droppableId === 'review') newStatus = 'Code Review';
-            if (destination.droppableId === 'done') newStatus = 'Done';
-
-            updateTaskStatus(removed.id, newStatus);
-        } else {
-            // Reordering within same column (not persisted in simple manager, purely visual le)
-            const column = columns[source.droppableId];
-            const copiedItems = [...column.items];
-            const [removed] = copiedItems.splice(source.index, 1);
-            copiedItems.splice(destination.index, 0, removed);
-            setColumns({
-                ...columns,
-                [source.droppableId]: { ...column, items: copiedItems }
-            });
+            if (res.ok) {
+                const data = await res.json();
+                setBoardData(data);
+                organizeIssues(data.issues, data.board?.columns || ['To Do', 'In Progress', 'Done']);
+            }
+        } catch (error) {
+            console.error('Error fetching board:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleCreateTaskClick = () => {
-        setIsCreateModalOpen(true);
-    };
-
-    const handleSaveTask = (taskData) => {
-        const newTask = addTask({
-            title: taskData.title,
-            content: taskData.title,
-            priority: taskData.priority,
-            assignee: taskData.assignee || 'Unassigned',
-            tag: taskData.tag || 'General',
-            comments: 0,
-            attachments: 0
+    const organizeIssues = (issues, columnNames) => {
+        const newColumns = {};
+        // Initialize columns based on Board Config
+        columnNames.forEach(name => {
+            // Create ID from name (e.g., "In Progress" -> "inprogress")
+            const id = name.toLowerCase().replace(/\s+/g, '');
+            newColumns[id] = { id, name, items: [] };
         });
 
-        // Refresh board
-        setColumns(getKanbanData());
-        setIsCreateModalOpen(false);
+        // Distribute issues
+        issues.forEach(issue => {
+            let statusKey = issue.status.toLowerCase().replace(/\s+/g, '');
+            // Fallback for mapped statuses
+            if (!newColumns[statusKey]) {
+                // Try to find best match or default to first column
+                const keys = Object.keys(newColumns);
+                if (statusKey.includes('progress')) statusKey = keys.find(k => k.includes('progress')) || keys[1];
+                else if (statusKey.includes('done')) statusKey = keys.find(k => k.includes('done')) || keys[keys.length - 1];
+                else statusKey = keys[0];
+            }
+
+            if (newColumns[statusKey]) {
+                // Map Issue fields to Card expected fields if necessary
+                issue.content = issue.title; // Card expects content ??
+                newColumns[statusKey].items.push(issue);
+            }
+        });
+        setColumns(newColumns);
     };
 
-    if (!winReady) return null; // Prevent hydration mismatch
+    useEffect(() => {
+        if (projectId) fetchBoard();
+    }, [projectId]);
 
-    const handleMoveTask = (taskId, direction) => {
-        // direction: -1 for left, 1 for right
-        const columnKeys = Object.keys(columns);
-        // Find which column the task is in
-        let sourceColKey = null;
-        let taskIndex = -1;
 
-        for (const key of columnKeys) {
-            const index = columns[key].items.findIndex(t => t.id === taskId);
-            if (index !== -1) {
-                sourceColKey = key;
-                taskIndex = index;
-                break;
+
+    const handleManualMove = async (taskId, direction) => {
+        // Find current column
+        let sourceColId = null;
+        let sourceCol = null;
+        Object.entries(columns).forEach(([colId, col]) => {
+            if (col.items.find(i => i.id === taskId)) {
+                sourceColId = colId;
+                sourceCol = col;
             }
-        }
+        });
 
-        if (!sourceColKey) return;
+        if (!sourceColId) return;
 
-        const currentColIndex = columnKeys.indexOf(sourceColKey);
-        const targetColIndex = currentColIndex + direction;
+        // Get Column Order (from filtered columns or board data)
+        const colOrder = Object.keys(columns);
+        const currentIndex = colOrder.indexOf(sourceColId);
+        const newIndex = currentIndex + direction;
 
-        // Check bounds
-        if (targetColIndex < 0 || targetColIndex >= columnKeys.length) return;
+        if (newIndex < 0 || newIndex >= colOrder.length) return;
 
-        const targetColKey = columnKeys[targetColIndex];
+        const destColId = colOrder[newIndex];
+        const destCol = columns[destColId];
 
-        // Optimistic update similar to onDragEnd
-        const sourceColumn = columns[sourceColKey];
-        const destColumn = columns[targetColKey];
-
-        const sourceItems = [...sourceColumn.items];
-        const destItems = [...destColumn.items];
-
+        // Optimistic Update
+        const sourceItems = [...sourceCol.items];
+        const destItems = [...destCol.items];
+        const taskIndex = sourceItems.findIndex(i => i.id === taskId);
         const [movedTask] = sourceItems.splice(taskIndex, 1);
-        destItems.push(movedTask); // Add to end of target column
+        destItems.push(movedTask); // Add to end of new column
 
         setColumns({
             ...columns,
-            [sourceColKey]: { ...sourceColumn, items: sourceItems },
-            [targetColKey]: { ...destColumn, items: destItems }
+            [sourceColId]: { ...sourceCol, items: sourceItems },
+            [destColId]: { ...destCol, items: destItems }
         });
 
-        // status mapping for persistence
-        let newStatus = 'To Do';
-        if (targetColKey === 'inprogress') newStatus = 'In Progress';
-        if (targetColKey === 'review') newStatus = 'Code Review';
-        if (targetColKey === 'done') newStatus = 'Done';
-
-        updateTaskStatus(movedTask.id, newStatus);
+        // API Update
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`http://localhost:3000/api/issues/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: destCol.name })
+            });
+        } catch (err) {
+            console.error("Failed to move task manually", err);
+            fetchBoard();
+        }
     };
+
+    const handleStatusChange = async (taskId, newStatus) => {
+        // Find task and source column
+        let sourceColId = null;
+        let sourceCol = null;
+        let task = null;
+
+        Object.entries(columns).forEach(([colId, col]) => {
+            const found = col.items.find(i => i.id === taskId);
+            if (found) {
+                sourceColId = colId;
+                sourceCol = col;
+                task = found;
+            }
+        });
+
+        if (!sourceColId || !task) return;
+
+        // Find destination column by name (status)
+        const destColEntry = Object.entries(columns).find(([_, col]) => col.name === newStatus);
+        if (!destColEntry) return; // Status doesn't exist as a column
+        const [destColId, destCol] = destColEntry;
+
+        if (sourceColId === destColId) return; // No change
+
+        // Optimistic Update
+        const sourceItems = [...sourceCol.items];
+        const destItems = [...destCol.items];
+
+        const taskIndex = sourceItems.findIndex(i => i.id === taskId);
+        const [movedTask] = sourceItems.splice(taskIndex, 1);
+        // Update task status locally
+        movedTask.status = newStatus;
+        destItems.push(movedTask);
+
+        setColumns({
+            ...columns,
+            [sourceColId]: { ...sourceCol, items: sourceItems },
+            [destColId]: { ...destCol, items: destItems }
+        });
+
+        // API Update
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`http://localhost:3000/api/issues/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+        } catch (err) {
+            console.error("Failed to update status dropdown", err);
+            fetchBoard();
+        }
+    };
+
+    const handleCreateIssue = async (taskData) => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const payload = {
+            ...taskData,
+            projectId, // Context
+            reporterId: user.id || user._id,
+            // activeSprint is handled by backend or could be passed here if selected
+            sprintId: boardData?.activeSprint?.id || null
+        };
+
+        try {
+            const res = await fetch('http://localhost:3000/api/issues', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                fetchBoard();
+                setIsCreateModalOpen(false);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // Filter Logic
+    const getFilteredColumns = () => {
+        const filtered = {};
+        Object.keys(columns).forEach(key => {
+            filtered[key] = {
+                ...columns[key],
+                items: columns[key].items.filter(item => {
+                    const matchesPriority = activeFilter === 'All' || item.priority === activeFilter;
+                    const sTerm = (searchTerm || '').toLowerCase();
+                    const matchesSearch = !sTerm || (item.title && item.title.toLowerCase().includes(sTerm)) || (item.issueId && item.issueId.toLowerCase().includes(sTerm));
+                    return matchesPriority && matchesSearch;
+                })
+            };
+        });
+        return filtered;
+    };
+
+    const displayColumns = getFilteredColumns();
+    const availableStatuses = Object.values(columns).map(c => c.name);
+
+    if (loading) return <div className="board-loading">Loading Board...</div>;
 
     return (
         <div className="taskboard-page">
             <div className="board-header">
-                <h1>Kanban Board</h1>
+                <div className="board-info">
+                    <h2>{boardData?.board?.name || 'Board'}</h2>
+                    {boardData?.activeSprint && <span className="sprint-badge">{boardData.activeSprint.name}</span>}
+                </div>
+
                 <div className="board-actions">
-                    <button className="btn-secondary small">Filter</button>
-                    <button className="btn-primary small" onClick={handleCreateTaskClick}>New Issue</button>
+                    <div className="filter-container">
+                        <button className={`btn-secondary small ${activeFilter !== 'All' ? 'active' : ''}`} onClick={() => setIsFilterOpen(!isFilterOpen)}>
+                            {activeFilter}
+                        </button>
+                        {isFilterOpen && (
+                            <div className="filter-menu">
+                                {['All', 'High', 'Medium', 'Low'].map(f => (
+                                    <div key={f} className="filter-option" onClick={() => { setActiveFilter(f); setIsFilterOpen(false); }}>{f}</div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <button className="btn-primary small" onClick={() => setIsCreateModalOpen(true)}>Create Issue</button>
                 </div>
             </div>
 
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div className="kanban-columns-container">
-                    {Object.entries(columns).map(([columnId, column], colIndex) => (
-                        <div className="kanban-column" key={columnId}>
-                            <div className="column-header-styled">
-                                <h2>{column.name}</h2>
-                                <span className="item-count">{column.items.length}</span>
-                            </div>
-                            <Droppable droppableId={columnId}>
-                                {(provided, snapshot) => (
-                                    <div
-                                        className={`column-droppable-area ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                    >
-                                        {column.items.map((item, index) => (
-                                            <KanbanCard
-                                                key={item.id}
-                                                task={item}
-                                                index={index}
-                                                onMove={handleMoveTask}
-                                                showLeft={colIndex > 0}
-                                                showRight={colIndex < Object.keys(columns).length - 1}
-                                            />
-                                        ))}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
+            <div className="kanban-columns-container">
+                {Object.entries(displayColumns).map(([colId, col]) => (
+                    <div className="kanban-column" key={colId}>
+                        <div className="column-header-styled">
+                            <h2>{col.name}</h2>
+                            <span className="item-count">{col.items.length}</span>
                         </div>
-                    ))}
-                </div>
-            </DragDropContext>
+                        <div className="column-droppable-area">
+                            {col.items.map((item, index) => (
+                                <KanbanCard
+                                    key={item.id}
+                                    task={item}
+                                    index={index}
+                                    onMove={handleManualMove}
+                                    onStatusChange={handleStatusChange}
+                                    availableStatuses={availableStatuses}
+                                    showLeft={Object.keys(displayColumns).indexOf(colId) > 0}
+                                    showRight={Object.keys(displayColumns).indexOf(colId) < Object.keys(displayColumns).length - 1}
+                                    onDelete={() => setTaskToDelete(item)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
 
             <CreateTaskModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                onCreate={handleSaveTask}
+                onCreate={handleCreateIssue}
+            />
+
+            <ConfirmationModal
+                isOpen={!!taskToDelete}
+                onClose={() => setTaskToDelete(null)}
+                onConfirm={async () => {
+                    if (!taskToDelete) return;
+                    try {
+                        const token = localStorage.getItem('token');
+                        const deleteId = taskToDelete.id || taskToDelete._id;
+                        await fetch(`http://localhost:3000/api/issues/${deleteId}`, {
+                            method: 'DELETE',
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        setTaskToDelete(null);
+                        fetchBoard();
+                    } catch (err) {
+                        console.error('Failed to delete task', err);
+                    }
+                }}
+                title="Delete Issue"
+                message={`Are you sure you want to delete ${taskToDelete?.issueId || 'this issue'}? This action cannot be undone.`}
             />
         </div>
     );

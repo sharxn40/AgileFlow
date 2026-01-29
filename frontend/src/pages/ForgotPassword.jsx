@@ -33,13 +33,17 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="auth-body">
-            <div className="auth-container" style={{ minHeight: '400px', width: '450px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <form onSubmit={handleSubmit} style={{ padding: '0 30px' }}>
+        <div className="auth-body" style={{ background: 'var(--bg-deep)', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* 
+                We use the ID 'premium-auth-modal' to inherit the Glassmorphism card styles from Auth.css.
+                We override width/height properties since this is a single card, not a split slider.
+            */}
+            <div id="premium-auth-modal" style={{ width: '450px', minHeight: '500px', padding: '20px 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                     <h1>Forgot Password</h1>
                     <p>Enter your email address and we'll send you a link to reset your password.</p>
 
-                    {message && <div className="error-badge" style={{ backgroundColor: '#e3fcef', color: '#006644', borderColor: '#006644' }}>{message}</div>}
+                    {message && <div className="error-badge" style={{ backgroundColor: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', borderColor: '#2ecc71' }}>{message}</div>}
                     {error && <div className="error-badge">{error}</div>}
 
                     <div className="form-group">
@@ -53,10 +57,10 @@ const ForgotPassword = () => {
                         />
                     </div>
 
-                    <button type="submit" style={{ marginTop: '20px', width: '100%' }}>Send Reset Link</button>
+                    <button type="submit" style={{ width: '100%', marginTop: '20px' }}>Send Reset Link</button>
 
-                    <Link to="/login" style={{ marginTop: '20px', display: 'block' }}>
-                        Back to Sign In
+                    <Link to="/login" style={{ marginTop: '20px', display: 'block', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                        &larr; Back to Sign In
                     </Link>
                 </form>
             </div>

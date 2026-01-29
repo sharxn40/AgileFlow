@@ -25,34 +25,59 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
 
     const [formData, setFormData] = useState({
         name: '',
+        key: '',
         type: 'SaaS Development',
         description: '',
         color: '#6366f1',
         dueDate: ''
     });
 
+    const [error, setError] = useState(null);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setError(null); // Clear error on change
     };
 
     const handleColorSelect = (color) => {
         setFormData({ ...formData, color: color });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        console.log('Modal: Submit clicked', formData);
+
         if (!formData.name.trim()) return;
 
-        // Create new project object (mock ID)
-        const newProject = {
-            id: Date.now(),
-            ...formData,
-            role: 'Admin', // Creator is admin
-            progress: 0
-        };
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('http://localhost:3000/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    key: formData.key, // Use manual key
+                    description: formData.description,
+                    leadId: null
+                })
+            });
 
-        onCreate(newProject);
-        onClose();
+            if (res.ok) {
+                const project = await res.json();
+                onCreate(project);
+                onClose();
+            } else {
+                const errData = await res.json();
+                setError(errData.message || 'Failed to create project');
+            }
+        } catch (err) {
+            console.error('Modal: Error', err);
+            setError('Network error. Please try again.');
+        }
     };
 
     return (
@@ -64,18 +89,39 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="modal-body">
-                    <div className="form-group">
-                        <label>Project Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            className="form-input"
-                            placeholder="e.g. Q4 Marketing Plan"
-                            value={formData.name}
-                            onChange={handleChange}
-                            autoFocus
-                            required
-                        />
+                    {error && <div style={{ background: '#FFEBE6', color: '#BF2600', padding: '10px', borderRadius: '4px', fontSize: '0.9rem' }}>{error}</div>}
+                    <div className="form-row">
+                        <div className="form-group" style={{ flex: 2 }}>
+                            <label>Project Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                className="form-input"
+                                placeholder="e.g. Q4 Marketing Plan"
+                                value={formData.name}
+                                onChange={(e) => {
+                                    // Auto-generate key if not manually edited
+                                    const newName = e.target.value;
+                                    const newKey = newName.substring(0, 4).toUpperCase();
+                                    setFormData({ ...formData, name: newName, key: newKey });
+                                }}
+                                autoFocus
+                                required
+                            />
+                        </div>
+                        <div className="form-group" style={{ flex: 1 }}>
+                            <label>Key</label>
+                            <input
+                                type="text"
+                                name="key"
+                                className="form-input"
+                                placeholder="KEY"
+                                value={formData.key}
+                                onChange={(e) => setFormData({ ...formData, key: e.target.value.toUpperCase() })}
+                                maxLength={6}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-row">

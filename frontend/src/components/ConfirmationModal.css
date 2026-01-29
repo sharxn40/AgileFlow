@@ -1,0 +1,54 @@
+.confirmation-modal {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    animation: slideIn 0.2s ease-out;
+    border: 1px solid #dfe1e6;
+}
+
+.modal-header.warning h2 {
+    color: #DE350B;
+    /* Jira Red */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    margin-bottom: 0;
+}
+
+.modal-body p {
+    color: #172B4D;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 16px 0 24px;
+}
+
+.btn-danger {
+    background-color: #DE350B;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #BF2600;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

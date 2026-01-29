@@ -1,26 +1,24 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 
 const sendEmail = async (options) => {
-    // 1. Create a transporter
-    const transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
+    // MOCK MODE: Always "send" by logging
+    console.log('-------- EMAIL MOCK MODE --------');
+    console.log('To:', options.email);
+    console.log('Message:', options.message);
+    console.log('---------------------------------');
+
+    // Write to a specific log file for easy retrieval
+    const logPath = path.join(__dirname, '../mock_emails.log');
+    const logData = `\n[${new Date().toISOString()}]\nTo: ${options.email}\nSubject: ${options.subject}\nMessage: ${options.message}\n-----------------------------------\n`;
+
+    fs.appendFile(logPath, logData, (err) => {
+        if (err) console.error('Failed to log mock email:', err);
     });
 
-    // 2. Define email options
-    const mailOptions = {
-        from: `AgileFlow <${process.env.EMAIL_USER}>`,
-        to: options.email,
-        subject: options.subject,
-        text: options.message,
-        // html: options.html // Optional: if you want HTML emails
-    };
-
-    // 3. Send email
-    await transporter.sendMail(mailOptions);
+    // Return success immediately
+    return Promise.resolve();
 };
 
 module.exports = sendEmail;

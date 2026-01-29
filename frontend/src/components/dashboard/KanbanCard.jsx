@@ -1,88 +1,106 @@
 import React from 'react';
-import { Draggable } from 'react-beautiful-dnd';
-import { MdAttachFile, MdChatBubbleOutline } from 'react-icons/md';
+
+import { MdAttachFile, MdChatBubbleOutline, MdDelete } from 'react-icons/md';
 import './KanbanCard.css';
 
-const KanbanCard = ({ task, index, onMove, showLeft, showRight }) => {
-    // task: { id, content, priority, assignee, tag, comments, attachments }
+const KanbanCard = ({ task, index, onMove, onStatusChange, availableStatuses, showLeft, showRight, isDragDisabled, onDelete }) => {
+    // task is now an Issue object: { id, issueId, title, priority, assignee, etc. }
+
+    // Safety check
+    if (!task) return null;
 
     const getPriorityColor = (p) => {
-        if (p === 'High') return '#FF5630'; // Red
-        if (p === 'Medium') return '#FFAB00'; // Orange
-        return '#36B37E'; // Green
+        const priority = p || 'Medium';
+        if (priority === 'High') return '#FF5630';
+        if (priority === 'Medium') return '#FFAB00';
+        return '#36B37E';
     };
 
     const getTagClass = (tag) => {
-        // Basic tag mapping
         return 'tag-blue';
     };
 
     return (
-        <Draggable draggableId={String(task.id)} index={index}>
-            {(provided, snapshot) => (
+        <div className="kanban-card">
+            <div className="card-header">
+                <span className="task-id">{task.issueId || task.id}</span>
+                {onDelete && (
+                    <button
+                        className="delete-task-btn"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(task.id);
+                        }}
+                        title="Delete"
+                    >
+                        <MdDelete />
+                    </button>
+                )}
                 <div
-                    className={`kanban-card ${snapshot.isDragging ? 'dragging' : ''}`}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={{ ...provided.draggableProps.style }}
-                >
-                    <div className="card-header">
-                        <span className="task-id">{task.id}</span>
-                        <div
-                            className="priority-dot"
-                            style={{ backgroundColor: getPriorityColor(task.priority) }}
-                            title={`Priority: ${task.priority}`}
-                        ></div>
-                    </div>
+                    className="priority-dot"
+                    style={{ backgroundColor: getPriorityColor(task.priority) }}
+                    title={`Priority: ${task.priority}`}
+                ></div>
+            </div>
 
-                    <p className="card-content">{task.content}</p>
+            <p className="card-content">{task.title}</p>
 
-                    <div className="card-tags">
-                        {task.tag && <span className={`tag-badge ${getTagClass(task.tag)}`}>{task.tag}</span>}
-                    </div>
+            <div className="card-tags">
+                {task.type && <span className={`tag-badge ${getTagClass(task.type)}`}>{task.type}</span>}
+                {/* Status Dropdown */}
+                {onStatusChange && availableStatuses && (
+                    <select
+                        className="status-dropdown-mini"
+                        value={task.status}
+                        onChange={(e) => onStatusChange(task.id, e.target.value)}
+                        onClick={(e) => e.stopPropagation()} // Prevent card click
+                    >
+                        {availableStatuses.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                        ))}
+                    </select>
+                )}
+            </div>
 
-                    <div className="card-footer">
-                        <div className="card-assignee">
-                            {task.assignee ? (
-                                <div className="assignee-avatar">{task.assignee}</div>
-                            ) : (
-                                <div className="assignee-avatar unassigned">?</div>
-                            )}
+            <div className="card-footer">
+                <div className="card-assignee">
+                    {task.assignee ? (
+                        <div className="assignee-avatar">
+                            {/* Handle object or string assignee */}
+                            {typeof task.assignee === 'object' && task.assignee.username
+                                ? task.assignee.username.charAt(0).toUpperCase()
+                                : 'A'}
                         </div>
-
-                        {/* Manual Move Controls requested by user */}
-                        <div className="card-move-controls">
-                            {/* Prevent drag on buttons by stopping propagation */}
-                            <button
-                                className={`move-btn ${showLeft ? '' : 'hidden'}`}
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onMove(task.id, -1); }}
-                                title="Move Left"
-                            >
-                                &lt;
-                            </button>
-                            <button
-                                className={`move-btn ${showRight ? '' : 'hidden'}`}
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onMove(task.id, 1); }}
-                                title="Move Right"
-                            >
-                                &gt;
-                            </button>
-                        </div>
-
-                        <div className="card-meta">
-                            {task.attachments > 0 && (
-                                <span className="meta-item"><MdAttachFile /> {task.attachments}</span>
-                            )}
-                            {task.comments > 0 && (
-                                <span className="meta-item"><MdChatBubbleOutline /> {task.comments}</span>
-                            )}
-                        </div>
-                    </div>
+                    ) : (
+                        <div className="assignee-avatar unassigned">?</div>
+                    )}
                 </div>
-            )}
-        </Draggable>
+
+                <div className="card-meta">
+                    {/* Mock counts if not present */}
+                    {(task.attachments?.length > 0) && (
+                        <span className="meta-item"><MdAttachFile /> {task.attachments.length}</span>
+                    )}
+                    {(task.history?.length > 0) && (
+                        <span className="meta-item"><MdChatBubbleOutline /> {task.history.length}</span>
+                    )}
+                </div>
+
+                <div className="card-move-controls">
+                    {onMove && showLeft && (
+                        <button className="move-btn" onClick={(e) => { e.stopPropagation(); onMove(task.id, -1); }} title="Move Left">
+                            &lt;
+                        </button>
+                    )}
+                    {onMove && showRight && (
+                        <button className="move-btn" onClick={(e) => { e.stopPropagation(); onMove(task.id, 1); }} title="Move Right">
+                            &gt;
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 };
 
-export default KanbanCard;
+export default React.memo(KanbanCard);

@@ -9,14 +9,15 @@ const COLORS = {
     'Low': '#36B37E'
 };
 
-const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
+const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [] }) => {
     if (!isOpen) return null;
 
     const [formData, setFormData] = useState({
         title: '',
-        tag: 'General',
+        tag: '',
         priority: 'Medium',
-        assignee: 'Me'
+        assignee: '',
+        projectId: projects.length > 0 ? projects[0].id : ''
     });
 
     const handleChange = (e) => {
@@ -31,9 +32,21 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
         e.preventDefault();
         if (!formData.title.trim()) return;
 
+        // If projects are required/available but none selected, handle that (though default selected)
+        if (projects.length > 0 && !formData.projectId) {
+            alert('Please select a project');
+            return;
+        }
+
         onCreate(formData);
         // Reset form slightly but keep some defaults
-        setFormData({ title: '', tag: 'General', priority: 'Medium', assignee: 'Me' });
+        setFormData({
+            title: '',
+            tag: '',
+            priority: 'Medium',
+            assignee: '',
+            projectId: projects.length > 0 ? projects[0].id : ''
+        });
     };
 
     return (
@@ -45,13 +58,28 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="modal-body">
+                    {projects.length > 0 && (
+                        <div className="form-group">
+                            <label>Project</label>
+                            <select
+                                name="projectId"
+                                className="form-input"
+                                value={formData.projectId}
+                                onChange={handleChange}
+                            >
+                                {projects.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
                     <div className="form-group">
                         <label>Task Title</label>
                         <input
                             type="text"
                             name="title"
                             className="form-input"
-                            placeholder="What needs to be done?"
                             value={formData.title}
                             onChange={handleChange}
                             autoFocus
@@ -66,7 +94,6 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
                                 type="text"
                                 name="tag"
                                 className="form-input"
-                                placeholder="e.g. Frontend, Bug, Design"
                                 value={formData.tag}
                                 onChange={handleChange}
                             />
@@ -77,9 +104,9 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
                                 type="text"
                                 name="assignee"
                                 className="form-input"
-                                placeholder="Initials (e.g. JD)"
                                 value={formData.assignee}
                                 onChange={handleChange}
+                                placeholder="Assignee Email (e.g. user@test.com)"
                             />
                         </div>
                     </div>

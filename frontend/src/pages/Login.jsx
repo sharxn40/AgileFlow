@@ -52,7 +52,13 @@ const Login = () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/dashboard');
+                if (data.user.role === 'admin') {
+                    navigate('/admin');
+                } else if (data.user.role === 'project-lead') {
+                    navigate('/dashboard/project-lead');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 setError(data.message || 'Google Login Failed');
             }
@@ -71,10 +77,19 @@ const Login = () => {
             });
             const data = await response.json();
 
+            console.log('Login Response Data:', data); // DEBUG
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/dashboard');
+
+                console.log('Checking Role:', data.user.role); // DEBUG
+                if (data.user.role === 'admin') {
+                    navigate('/admin');
+                } else if (data.user.role === 'project-lead') {
+                    navigate('/dashboard/project-lead');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 setError(data.message);
             }
@@ -104,7 +119,13 @@ const Login = () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/dashboard');
+                if (data.user.role === 'admin') {
+                    navigate('/admin');
+                } else if (data.user.role === 'project-lead') {
+                    navigate('/dashboard/project-lead');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 setError(data.message);
             }
@@ -176,7 +197,6 @@ const Login = () => {
                                 <GoogleLogin
                                     onSuccess={handleGoogleSuccess}
                                     onError={() => setError('Google Login Failed')}
-                                    useOneTap
                                     theme={theme === 'dark' ? 'filled_black' : 'outline'}
                                     width="280"
                                 />
@@ -192,6 +212,30 @@ const Login = () => {
                             <Link to="/forgot-password" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '5px' }}>Forgot your password?</Link>
 
                             <button type="submit" className="btn-primary-lg" style={{ width: '100%', marginTop: '15px' }}>Sign In</button>
+
+                            <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '10px' }}>Demo Access:</p>
+                                <button
+                                    type="button"
+                                    className="btn-secondary small"
+                                    onClick={() => {
+                                        setLoginData({ email: 'lead@demo.com', password: 'password123' });
+                                    }}
+                                    style={{ width: '100%', marginBottom: '10px' }}
+                                >
+                                    Fill as Project Lead
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-secondary small"
+                                    onClick={() => {
+                                        setLoginData({ email: 'admin@agileflow.com', password: 'admin123' });
+                                    }}
+                                    style={{ width: '100%' }}
+                                >
+                                    Fill as Admin
+                                </button>
+                            </div>
                         </form>
                     </div>
 

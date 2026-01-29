@@ -1,0 +1,338 @@
+/* AdminDashboard.css - Clean Theme */
+:root {
+    /* Inherit variables from global theme or define defaults */
+    --theme-bg-main: #f8fafc;
+    --theme-bg-card: #ffffff;
+    --theme-text-main: #1e293b;
+    --theme-text-muted: #64748b;
+    --theme-border: #e2e8f0;
+    --theme-primary: #6366f1;
+    --theme-success: #10b981;
+    --theme-danger: #ef4444;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--theme-bg-main);
+}
+
+.admin-main-content {
+    flex: 1;
+    margin-left: 260px;
+    /* Width of sidebar */
+    padding: 32px;
+    overflow-y: auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.header-title h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--theme-text-main);
+    margin-bottom: 4px;
+}
+
+.header-title p {
+    color: var(--theme-text-muted);
+    font-size: 0.95rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Stats Grid */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.admin-stat-card {
+    background: var(--theme-bg-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-icon-wrapper.purple {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.stat-icon-wrapper.blue {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.stat-icon-wrapper.green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.stat-meta {
+    text-align: right;
+}
+
+.stat-meta h3 {
+    font-size: 0.85rem;
+    color: var(--theme-text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.stat-meta .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--theme-text-main);
+    line-height: 1;
+}
+
+.stat-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--theme-text-muted);
+    margin-top: auto;
+}
+
+.trend-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.trend-badge.positive {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* Table Section */
+.admin-content-card {
+    background: var(--theme-bg-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.card-title-row h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--theme-text-main);
+}
+
+.admin-search-wrapper {
+    position: relative;
+    width: 300px;
+}
+
+.admin-search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border-radius: 10px;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-bg-main);
+    color: var(--theme-text-main);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.admin-search-input:focus {
+    border-color: var(--theme-primary);
+    background: white;
+}
+
+.search-icon-absolute {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--theme-text-muted);
+}
+
+/* User Table Clean */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.modern-table th {
+    text-align: left;
+    padding: 16px;
+    border-bottom: 1px solid var(--theme-border);
+    color: var(--theme-text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--theme-border);
+    vertical-align: middle;
+}
+
+.modern-table tr:last-child td {
+    border-bottom: none;
+}
+
+.user-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+}
+
+.user-text-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-display-name {
+    font-weight: 600;
+    color: var(--theme-text-main);
+    font-size: 0.95rem;
+}
+
+.user-display-email {
+    font-size: 0.85rem;
+    color: var(--theme-text-muted);
+}
+
+.role-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.role-pill.admin {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.role-pill.project-lead {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.role-pill.user {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.status-dot-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--theme-text-main);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot.active {
+    background: #10b981;
+    box-shadow: 0 0 0 4px #dcfce7;
+}
+
+.dot.offline {
+    background: #94a3b8;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--theme-border);
+    background: white;
+    color: var(--theme-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: var(--theme-primary);
+    color: var(--theme-primary);
+    background: #eef2ff;
+}
+
+.icon-btn.danger:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
+}

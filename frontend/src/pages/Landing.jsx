@@ -30,16 +30,17 @@ const Landing = () => {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Simple Intersection Observer for fade-ins
+        // Premium Intersection Observer for scroll reveals
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    entry.target.classList.add('is-visible');
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
-        const elements = document.querySelectorAll('.scroll-reveal');
+        // Select all elements to reveal
+        const elements = document.querySelectorAll('.reveal-on-scroll');
         elements.forEach(el => observer.observe(el));
 
         return () => {
@@ -79,24 +80,22 @@ const Landing = () => {
             {/* Hero Section */}
             <main className="landing-hero">
                 <div className="hero-content">
-                    <h1 className="hero-title">
+                    <h1 className="hero-title hero-enter hero-enter-1">
                         Ship software <br />
                         <span className="highlight-text">at warp speed.</span>
                     </h1>
-                    <p className="hero-subtitle">
+                    <p className="hero-subtitle hero-enter hero-enter-2">
                         The all-in-one workspace for high-performing engineering teams. Plan, build, and ship world-class software without the chaos.
                     </p>
 
-                    <div className="hero-actions">
+                    <div className="hero-actions hero-enter hero-enter-3">
                         <button onClick={() => openAuthModal('register')} className="btn-primary-lg" style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>Start Building Free</button>
                         <a href="#features" className="btn-secondary-lg">See How It Works</a>
                     </div>
-
-
                 </div>
 
                 {/* Hero Visual - Living Workspace (Animated, Small, Transparent) */}
-                <div className="hero-visual">
+                <div className="hero-visual hero-enter hero-enter-4">
                     <div className="live-workspace">
 
                         {/* 1. Code Editor Window */}
@@ -141,28 +140,112 @@ const Landing = () => {
 
             {/* Features Glassmorphism Section */}
             <section id="features" className="features-section">
-                <div className="section-header">
+                <div className="section-header reveal-on-scroll">
                     <h2 className="section-title">Everything you need to build better</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>Stop wrestling with complex tools. AgileFlow simply works.</p>
                 </div>
 
                 <div className="features-grid">
-                    <div className="glass-card scroll-reveal">
+                    <div className="glass-card reveal-on-scroll">
                         <div className="feature-icon-wrapper"><FaLayerGroup /></div>
                         <h3 className="feature-title">Flexible Workflows</h3>
                         <p className="feature-desc">Customize your Scrum or Kanban boards with a drag-and-drop interface that feels like magic.</p>
+
+                        {/* Visual: Mini Kanban */}
+                        <div className="card-visual">
+                            <div className="visual-kanban">
+                                <div className="vk-col"><div className="vk-item"></div><div className="vk-item active"></div></div>
+                                <div className="vk-col"><div className="vk-item"></div><div className="vk-item"></div><div className="vk-item"></div></div>
+                                <div className="vk-col"><div className="vk-item active"></div></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="glass-card scroll-reveal">
+                    <div className="glass-card reveal-on-scroll">
                         <div className="feature-icon-wrapper"><FaBolt /></div>
                         <h3 className="feature-title">Real-time Collab</h3>
                         <p className="feature-desc">See updates instantly. Comments, mentions, and notifications keep the whole team in sync.</p>
+
+                        {/* Visual: Avatar Stack */}
+                        <div className="card-visual">
+                            <div className="visual-collab">
+                                <div className="vc-avatar">JD <div className="vc-badge"></div></div>
+                                <div className="vc-avatar">AS</div>
+                                <div className="vc-avatar">MK</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="glass-card scroll-reveal">
+                    <div className="glass-card reveal-on-scroll">
                         <div className="feature-icon-wrapper"><FaChartLine /></div>
                         <h3 className="feature-title">Instant Insights</h3>
                         <p className="feature-desc">Unblock bottlenecks with zero-config burndown charts and velocity reports.</p>
+
+                        {/* Visual: Mini Chart */}
+                        <div className="card-visual">
+                            <div className="visual-chart">
+                                <div className="v-bar" style={{ height: '20px' }}></div>
+                                <div className="v-bar" style={{ height: '35px' }}></div>
+                                <div className="v-bar" style={{ height: '25px' }}></div>
+                                <div className="v-bar" style={{ height: '40px' }}></div>
+                                <div className="v-bar" style={{ height: '30px' }}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Mission / Purpose Section (RESTORED) */}
+            <section className="landing-mission">
+                <div className="mission-header reveal-on-scroll">
+                    <span className="mission-intro">Our Purpose</span>
+                    <h2 className="mission-title">We build tools that let you focus on what matters: <span className="highlight-text">The Code.</span></h2>
+                </div>
+
+                <div className="metrics-grid">
+                    <div className="metric-card reveal-on-scroll">
+                        <span className="metric-number">10x</span>
+                        <span className="metric-label">Faster Planning</span>
+                        <span className="metric-desc">Automated sprint setup means you start coding sooner.</span>
+                    </div>
+                    <div className="metric-card reveal-on-scroll">
+                        <span className="metric-number">100%</span>
+                        <span className="metric-label">Clarity</span>
+                        <span className="metric-desc">Everyone knows what to build, when, and why.</span>
+                    </div>
+                    <div className="metric-card reveal-on-scroll">
+                        <span className="metric-number">0</span>
+                        <span className="metric-label">Chaos</span>
+                        <span className="metric-desc">Say goodbye to messy spreadsheets and endless threads.</span>
+                    </div>
+                </div>
+            </section>
+
+            {/* About Section (RESTORED) */}
+            <section className="landing-about">
+                <div className="about-grid">
+                    <div className="about-content reveal-on-scroll">
+                        <h2 className="section-title">Built by Developers, <br /> For Developers.</h2>
+                        <p>
+                            We were tired of project management tools that felt like a chore. Clunky interfaces, slow loading times, and overly complex workflows were slowing us down.
+                        </p>
+                        <p>
+                            So we built AgileFlow. A tool that respects your time and your intelligence. It's designed to get out of your way so you can do your best work.
+                        </p>
+                        <button onClick={() => openAuthModal('register')} className="btn-secondary-lg">Join the Movement</button>
+                    </div>
+
+                    <div className="landing-about-visual reveal-on-scroll">
+                        {/* Blueprint Animation Lines */}
+                        <div className="blueprint-line bl-1"></div>
+                        <div className="blueprint-line bl-2"></div>
+                        <div className="blueprint-line bl-3"></div>
+                        <div className="blueprint-line bl-4"></div>
+
+                        {/* Central Symbol */}
+                        <div className="about-symbol">
+                            <FaRocket />
+                        </div>
                     </div>
                 </div>
             </section>
@@ -201,7 +284,10 @@ const Landing = () => {
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    &copy; {new Date().getFullYear()} AgileFlow Inc. All rights reserved.
+                    <p>&copy; {new Date().getFullYear()} AgileFlow Inc. All rights reserved.</p>
+                    <div style={{ marginTop: '10px' }}>
+                        <a href="/admin/login" style={{ color: 'rgba(255,255,255,0.1)', textDecoration: 'none', fontSize: '10px' }}>Admin Portal</a>
+                    </div>
                 </div>
             </footer>
 

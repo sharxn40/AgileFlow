@@ -55,7 +55,12 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                     localStorage.setItem('rememberbox', 'true');
                 }
                 onClose(); // Close modal on success
-                navigate('/dashboard');
+
+                if (data.user.role === 'project-lead') {
+                    navigate('/dashboard/project-lead');
+                } else {
+                    navigate('/dashboard');
+                }
             } else { setError(data.message); }
         } catch (err) { setError('Failed to connect to server'); }
     };
@@ -94,11 +99,17 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             const idToken = await user.getIdToken();
 
             try {
-                // Send ID Token to Backend
+                // Send ID Token and User Details to Backend
                 const response = await fetch('http://localhost:3000/api/auth/google', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: idToken }),
+                    body: JSON.stringify({
+                        token: idToken,
+                        email: user.email,
+                        name: user.displayName,
+                        googleId: user.uid,
+                        photoURL: user.photoURL
+                    }),
                 });
 
                 const data = await response.json();
@@ -121,7 +132,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             if (error.code === 'auth/popup-closed-by-user') {
                 setError('Sign-in cancelled.');
             } else {
-                setError('Google Sign-In failed. Please try again.');
+                setError('Google Sign-In failed. Please use "Demo Access" below if testing locally.');
             }
         }
     };
@@ -135,41 +146,21 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                     <FaTimes />
                 </button>
 
-                <div className={`auth-container ${isSignUp ? "right-panel-active" : ""}`} id="container">
+                <div className={`auth-container ${isSignUp ? "right-panel-active" : ""}`} id="premium-auth-modal">
 
                     {/* Sign Up Form Container */}
                     <div className="form-container sign-up-container">
                         <form onSubmit={handleRegisterSubmit}>
-                            <h1 style={{ marginBottom: '10px' }}>Create Account</h1>
-                            <p style={{ marginBottom: '15px' }}>Use your Google email for auto-fill</p>
+                            <h1>Create Account</h1>
+                            <p>Use your Google email for auto-fill</p>
 
-                            <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <div className="social-container">
                                 <button
                                     type="button"
                                     onClick={handleGoogleLogin}
                                     className="google-btn"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '10px',
-                                        background: '#fff',
-                                        color: '#757575',
-                                        border: '1px solid #dadce0',
-                                        borderRadius: '4px',
-                                        padding: '8px 16px',
-                                        fontSize: '14px',
-                                        fontWeight: '500',
-                                        cursor: 'pointer',
-                                        width: '300px',
-                                        height: '40px',
-                                        transition: 'background-color 0.2s',
-                                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-                                    }}
-                                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
                                 >
-                                    <img src={googleLogo} alt="Google" style={{ width: '20px', height: '20px' }} />
+                                    <img src={googleLogo} alt="Google" className="google-icon" />
                                     Sign up with Google
                                 </button>
                             </div>
@@ -198,7 +189,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     required
                                 />
                             </div>
-                            <div className="form-group" style={{ position: 'relative' }}>
+                            <div className="form-group relative-group">
                                 <label>Password</label>
                                 <input
                                     type={showRegisterPassword ? "text" : "password"}
@@ -209,19 +200,13 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     required
                                 />
                                 <span
-                                    style={{
-                                        position: 'absolute',
-                                        right: '15px',
-                                        top: '40px',
-                                        cursor: 'pointer',
-                                        color: '#777'
-                                    }}
+                                    className="password-toggle"
                                     onClick={() => setShowRegisterPassword(!showRegisterPassword)}
                                 >
                                     {showRegisterPassword ? <FaEyeSlash /> : <FaEye />}
                                 </span>
                             </div>
-                            <div className="form-group" style={{ position: 'relative' }}>
+                            <div className="form-group relative-group">
                                 <label>Confirm Password</label>
                                 <input
                                     type={showRegisterConfirm ? "text" : "password"}
@@ -232,20 +217,14 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     required
                                 />
                                 <span
-                                    style={{
-                                        position: 'absolute',
-                                        right: '15px',
-                                        top: '40px',
-                                        cursor: 'pointer',
-                                        color: '#777'
-                                    }}
+                                    className="password-toggle"
                                     onClick={() => setShowRegisterConfirm(!showRegisterConfirm)}
                                 >
                                     {showRegisterConfirm ? <FaEyeSlash /> : <FaEye />}
                                 </span>
                             </div>
 
-                            <button type="submit" style={{ marginTop: '15px' }}>Sign Up</button>
+                            <button type="submit" className="submit-btn">Sign Up</button>
                         </form>
                     </div>
 
@@ -253,33 +232,13 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                     <div className="form-container sign-in-container">
                         <form onSubmit={handleLoginSubmit}>
                             <h1>Sign in</h1>
-                            <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <div className="social-container">
                                 <button
                                     type="button"
                                     onClick={handleGoogleLogin}
                                     className="google-btn"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '10px',
-                                        background: '#fff',
-                                        color: '#757575',
-                                        border: '1px solid #dadce0',
-                                        borderRadius: '4px',
-                                        padding: '8px 16px',
-                                        fontSize: '14px',
-                                        fontWeight: '500',
-                                        cursor: 'pointer',
-                                        width: '300px',
-                                        height: '40px',
-                                        transition: 'background-color 0.2s',
-                                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-                                    }}
-                                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
                                 >
-                                    <img src={googleLogo} alt="Google" style={{ width: '20px', height: '20px' }} />
+                                    <img src={googleLogo} alt="Google" className="google-icon" />
                                     Sign in with Google
                                 </button>
                             </div>
@@ -298,7 +257,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     required
                                 />
                             </div>
-                            <div className="form-group" style={{ position: 'relative' }}>
+                            <div className="form-group relative-group">
                                 <label>Password</label>
                                 <input
                                     type={showLoginPassword ? "text" : "password"}
@@ -309,13 +268,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     required
                                 />
                                 <span
-                                    style={{
-                                        position: 'absolute',
-                                        right: '15px',
-                                        top: '40px',
-                                        cursor: 'pointer',
-                                        color: '#777'
-                                    }}
+                                    className="password-toggle"
                                     onClick={() => setShowLoginPassword(!showLoginPassword)}
                                 >
                                     {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
@@ -333,17 +286,17 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                     Remember Me
                                 </label>
                                 <span
+                                    className="forgot-password-link"
                                     onClick={() => {
                                         onClose();
                                         navigate('/forgot-password');
                                     }}
-                                    style={{ cursor: 'pointer', color: '#0052CC', fontWeight: 'bold' }}
                                 >
                                     Forgot your password?
                                 </span>
                             </div>
 
-                            <button type="submit">Sign In</button>
+                            <button type="submit" className="submit-btn">Sign In</button>
                         </form>
                     </div>
 

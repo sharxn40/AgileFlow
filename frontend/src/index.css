@@ -22,6 +22,10 @@
   --theme-warning: #FFAB00;
   --theme-danger: #FF5630;
   --theme-info: #42526E;
+
+  /* Fix for undefined variables causing invisible text */
+  --text-primary: #172B4D;
+  --text-secondary: #5E6C84;
 }
 
 * {
@@ -31,13 +35,13 @@
 }
 
 html {
-  background-color: #0f111a;
+  background-color: #F4F5F7;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
-  background: #0f111a;
-  /* Default to Dark SaaS BG */
+  background: #F4F5F7;
+  /* Default to Light SaaS BG - Fix Black Screen */
   color: var(--text-primary);
 
   min-height: 100vh;
@@ -171,7 +175,8 @@ input:focus {
 
 /* Primary Button */
 .btn-primary {
-  width: 100%;
+  width: auto;
+  min-width: 100px;
   background-color: var(--jira-primary);
   color: white;
   border: none;

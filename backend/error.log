@@ -1,0 +1,171 @@
+[2026-01-19T06:33:32.238Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:33:40.623Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:34:20.455Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:44:54.743Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:45:08.383Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:46:59.398Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:47:08.853Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:54:55.268Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:55:13.902Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:57:46.364Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T06:57:55.892Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T08:00:42.961Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T08:27:51.670Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+[2026-01-19T09:59:10.788Z] GET_MY_TASKS_ERROR: Error
+    at Database.<anonymous> (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:185:27)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\sqlite\query.js:183:12)
+    at C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\sequelize.js:315:28
+    at async SQLiteQueryInterface.select (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Task.findAll (C:\Users\User\Documents\Project\AgileFlow\backend\node_modules\sequelize\lib\model.js:1140:21)
+    at async exports.getMyTasks (C:\Users\User\Documents\Project\AgileFlow\backend\controllers\taskController.js:25:23)
+Date: 2026-01-29T05:28:00.802Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2a88b4c3deasm38508265ad.57 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:00:47.197Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2a8980c8623sm27062065ad.94 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:02:41.379Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-82379b19a9esm4802164b3a.11 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:05:48.696Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-353f6103e25sm7526527a91.1 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:23:05.993Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-c642a3359f4sm3807512a12.22 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:24:30.648Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-c6558a1a5c9sm1136144a12.8 - gsmtp
+To: sharonshibupandakasalayil2028@mca.ajce.in
+-------------------
+Date: 2026-01-29T06:28:57.965Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-82379c54ddcsm4192275b3a.64 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------
+Date: 2026-01-29T06:30:08.509Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-3540f2f24ccsm5059425a91.8 - gsmtp
+To: brainstormbrigade321@gmail.com
+-------------------
+Date: 2026-01-29T06:33:34.788Z
+Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-3540f2cb419sm4298002a91.1 - gsmtp
+To: shibusharon2013@gmail.com
+-------------------

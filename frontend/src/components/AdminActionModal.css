@@ -1,0 +1,170 @@
+/* AdminActionModal.css */
+.admin-modal-overlay {
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.admin-modal-content {
+    background: var(--theme-bg-card, #ffffff);
+    border: 1px solid var(--theme-border, #e2e8f0);
+    border-radius: 16px;
+    padding: 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    outline: none;
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--theme-border, #e2e8f0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--theme-text-main, #1e293b);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--theme-text-muted, #64748b);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: #f1f5f9;
+    color: #ef4444;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    background: var(--theme-bg-secondary, #f8fafc);
+    border-top: 1px solid var(--theme-border, #e2e8f0);
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.modal-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.modal-btn.cancel {
+    background: white;
+    border-color: var(--theme-border, #e2e8f0);
+    color: var(--theme-text-muted, #64748b);
+}
+
+.modal-btn.cancel:hover {
+    background: #f1f5f9;
+    color: var(--theme-text-main, #1e293b);
+}
+
+.modal-btn.primary {
+    background: var(--theme-primary, #6366f1);
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    background: #4f46e5;
+}
+
+.modal-btn.delete {
+    background: #ef4444;
+    color: white;
+}
+
+.modal-btn.delete:hover {
+    background: #dc2626;
+}
+
+/* Custom Radio Styles for Role Selection */
+.role-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.role-option-label {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--theme-border, #e2e8f0);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.role-option-label:hover {
+    border-color: var(--theme-primary, #6366f1);
+    background: #f8fafc;
+}
+
+.role-option-label.selected {
+    border-color: var(--theme-primary, #6366f1);
+    background: #eef2ff;
+}
+
+.role-radio {
+    margin-right: 12px;
+    accent-color: var(--theme-primary, #6366f1);
+}
+
+.role-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.role-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--theme-text-main, #1e293b);
+    text-transform: capitalize;
+}
+
+.role-desc {
+    font-size: 0.8rem;
+    color: var(--theme-text-muted, #64748b);
+}
