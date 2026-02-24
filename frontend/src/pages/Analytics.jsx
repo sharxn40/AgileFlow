@@ -7,6 +7,7 @@ const Analytics = () => {
     const [velocityData, setVelocityData] = useState([]);
     const [burndownData, setBurndownData] = useState([]);
     const [activityData, setActivityData] = useState([]);
+    const [workloadData, setWorkloadData] = useState([]);
     const [activeSprint, setActiveSprint] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -80,6 +81,8 @@ const Analytics = () => {
         };
 
         fetchData();
+        const interval = setInterval(fetchData, 5000); // Poll every 5 seconds for "Real Time"
+        return () => clearInterval(interval);
     }, [selectedProjectId]);
 
     if (loading) return <div style={{ padding: '2rem' }}>Loading analytics...</div>;
@@ -211,7 +214,32 @@ const Analytics = () => {
                     </div>
                 </div>
 
-                {/* Recent Activity Table */}
+                {/* User Workload Chart */}
+                <div className="dash-card" style={{ gridColumn: 'span 2' }}>
+                    <div className="card-title">Team Workload</div>
+                    {workloadData.length > 0 ? (
+                        <div style={{ height: 350, marginTop: '20px', background: '#fff' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={workloadData} layout="vertical" margin={{ left: 20 }}>
+                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#DFE1E6" />
+                                    <XAxis type="number" stroke="#5E6C84" tick={{ fontSize: 12 }} />
+                                    <YAxis dataKey="name" type="category" stroke="#5E6C84" tick={{ fontSize: 12 }} width={80} />
+                                    <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '6px' }} />
+                                    <Legend />
+                                    <Bar dataKey="To Do" stackId="a" fill="#DFE1E6" />
+                                    <Bar dataKey="In Progress" stackId="a" fill="#0052CC" />
+                                    <Bar dataKey="Done" stackId="a" fill="#36B37E" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    ) : (
+                        <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B778C' }}>
+                            No assigned tasks found.
+                        </div>
+                    )}
+                </div>
+
+                {/* Recent Activity Table (Full Width now?) or keep span 2 */}
                 <div className="dash-card" style={{ gridColumn: 'span 2' }}>
                     <div className="card-title">Recent Activity</div>
                     {activityData.length > 0 ? (

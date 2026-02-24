@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
-import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa'; // Removed FaGoogle
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase';
-import googleLogo from '../assets/google_logo.svg'; // Import Real Logo
-import '../pages/Auth.css'; // Re-use auth styles
+import { useGoogleLogin } from '@react-oauth/google';
+import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
+import googleLogo from '../assets/google_logo.svg';
+import { useAuth } from '../context/AuthContext';
+import '../pages/Auth.css';
 
 const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isSignUp, setIsSignUp] = useState(false);
 
     // Form States
@@ -49,18 +49,13 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                login(data.user, data.token);
                 if (rememberMe) {
                     localStorage.setItem('rememberbox', 'true');
                 }
-                onClose(); // Close modal on success
-
-                if (data.user.role === 'project-lead') {
-                    navigate('/dashboard/project-lead');
-                } else {
-                    navigate('/dashboard');
-                }
+                onClose();
+                if (data.user.role === 'admin') navigate('/admin');
+                else navigate('/dashboard');
             } else { setError(data.message); }
         } catch (err) { setError('Failed to connect to server'); }
     };
@@ -84,58 +79,49 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                onClose(); // Close modal on success
+                login(data.user, data.token);
+                onClose();
                 navigate('/dashboard');
             } else { setError(data.message); }
         } catch (err) { setError('Failed to connect to server'); }
     };
 
-    const handleGoogleLogin = async () => {
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            const idToken = await user.getIdToken();
-
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
             try {
-                // Send ID Token and User Details to Backend
+                // Exchange the OAuth2 access token for user info
+                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+                const userInfo = await userInfoRes.json();
+
+                // Send the access token and userInfo to our backend
                 const response = await fetch('http://localhost:3000/api/auth/google', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        token: idToken,
-                        email: user.email,
-                        name: user.displayName,
-                        googleId: user.uid,
-                        photoURL: user.photoURL
-                    }),
+                    body: JSON.stringify({ token: tokenResponse.access_token, userInfo }),
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    login(data.user, data.token);
                     onClose();
-                    navigate('/dashboard');
+                    if (data.user.role === 'admin') navigate('/admin');
+                    else navigate('/dashboard');
                 } else {
+                    console.error("Backend Auth Error:", data);
                     setError(data.message || 'Google Login Failed');
                 }
             } catch (networkError) {
-                console.error("Backend Connection Error:", networkError);
-                setError('Failed to connect to authentication server. Please try again later.');
+                console.error("Critical Backend Connection Error:", networkError);
+                setError(`Failed to connect to authentication server at http://localhost:3000. Error: ${networkError.message}`);
             }
-
-        } catch (error) {
-            console.error("Firebase Auth Error:", error);
-            if (error.code === 'auth/popup-closed-by-user') {
-                setError('Sign-in cancelled.');
-            } else {
-                setError('Google Sign-In failed. Please use "Demo Access" below if testing locally.');
-            }
-        }
-    };
+        },
+        onError: () => setError('Google Login Failed. Please try again.'),
+        prompt: 'select_account',
+        flow: 'implicit',
+    });
 
     if (!isOpen) return null;
 

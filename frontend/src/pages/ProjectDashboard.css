@@ -10,15 +10,15 @@
 .project-header {
     background: white;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     z-index: 10;
 }
 
 .breadcrumbs {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--theme-text-muted);
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -70,7 +70,7 @@
 .project-content {
     flex: 1;
     overflow: hidden;
-    padding: 24px 32px;
+    padding: 12px 24px;
     background: #F4F5F7;
 }
 

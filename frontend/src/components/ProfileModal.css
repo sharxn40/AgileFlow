@@ -9,10 +9,15 @@
     /* Sleek dark overlay */
     backdrop-filter: blur(8px);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-start;
+    /* Important: Allow modal to expand down */
     z-index: 1000;
     animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding: 40px 20px;
+    /* Spacing */
 }
 
 @keyframes fadeIn {
@@ -37,10 +42,12 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    max-height: 90vh;
-    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Removed max-height to let it grow comfortably */
     position: relative;
     color: var(--theme-text-main);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    margin: auto;
+    /* Magic centering trick */
 }
 
 @keyframes scaleIn {
@@ -81,7 +88,8 @@
 
 /* Header & Banner */
 .profile-header {
-    height: 220px;
+    height: 180px;
+    /* Reduced from 220px */
     position: relative;
     background-color: var(--theme-bg-secondary);
     flex-shrink: 0;
@@ -202,6 +210,9 @@
     margin-bottom: 4px;
     font-weight: 800;
     letter-spacing: -0.02em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
 }
 
 .user-role {
@@ -415,6 +426,8 @@
     color: var(--theme-text-main);
     font-size: 1.05rem;
     font-weight: 500;
+    word-break: break-all;
+    overflow-wrap: anywhere;
 }
 
 .security-alert {

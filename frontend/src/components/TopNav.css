@@ -3,7 +3,9 @@
 /* Modern TopNav - Floating Card Style */
 .app-topnav {
     height: 72px;
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     /* Removed border-bottom for floating look */
     display: flex;
     align-items: center;
@@ -30,28 +32,12 @@
     /* Push search to right */
 }
 
-.nav-pill {
-    background: transparent;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #5E6C84;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.nav-pill:hover {
-    background-color: #F4F5F7;
+.current-view-title {
+    font-size: 1.25rem;
+    font-weight: 700;
     color: #172B4D;
-}
-
-.nav-pill.active {
-    background-color: #172B4D;
-    /* Dark pill for active state */
-    color: #FFFFFF;
-    box-shadow: 0 2px 4px rgba(23, 43, 77, 0.2);
+    margin: 0;
+    letter-spacing: -0.01em;
 }
 
 /* Search Bar */
@@ -193,6 +179,10 @@
     color: var(--theme-text-main);
     font-size: 0.9rem;
     font-weight: 500;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-icon {

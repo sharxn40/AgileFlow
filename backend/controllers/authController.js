@@ -61,24 +61,33 @@ exports.login = async (req, res) => {
 const { admin } = require('../config/firebaseAdmin');
 
 exports.googleLogin = async (req, res) => {
-    const { token } = req.body; // Frontend sends 'token' (ID Token)
+    const { token, userInfo } = req.body;
 
     try {
-        // 1. VERIFY the token using Admin SDK (Robust & Secure)
-        const decodedToken = await admin.auth().verifyIdToken(token);
+        let email, name, googleId, photoURL;
 
-        // 2. Extract verified data
-        const email = decodedToken.email;
-        const name = decodedToken.name || email.split('@')[0];
-        const googleId = decodedToken.uid;
-        const photoURL = decodedToken.picture;
+        if (userInfo && userInfo.email) {
+            // New flow: frontend sends pre-verified userInfo from Google's /userinfo endpoint
+            email = userInfo.email;
+            name = userInfo.name || email.split('@')[0];
+            googleId = userInfo.sub;
+            photoURL = userInfo.picture;
+            console.log("DEBUG: Using userInfo payload for", email);
+        } else {
+            // Legacy flow: try to verify as Firebase ID token
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            email = decodedToken.email;
+            name = decodedToken.name || email.split('@')[0];
+            googleId = decodedToken.uid;
+            photoURL = decodedToken.picture;
+            console.log("DEBUG: verifyIdToken succeeded for", email);
+        }
 
-        // 3. Login or Create User (Firestore)
-        // Note: Our Firestore User model 'findOne' expects { where: { email: ... } }
+        // Login or Create User (Firestore)
+        console.log("DEBUG: Querying User.findOne for", email);
         let user = await User.findOne({ where: { email } });
 
         if (!user) {
-            // Create new user
             user = await User.create({
                 username: name,
                 email,
@@ -87,18 +96,12 @@ exports.googleLogin = async (req, res) => {
                 profilePicture: photoURL
             });
         } else {
-            // Update profile
-            // Note: Firestore User is a plain object in our DAO + save method, but let's be safe
-            if (photoURL && user.profilePicture !== photoURL) {
-                // Ensure we have an ID to update
-                if (user.id) {
-                    await User.collection.doc(user.id).update({ profilePicture: photoURL });
-                    user.profilePicture = photoURL;
-                }
+            if (photoURL && user.profilePicture !== photoURL && user.id) {
+                await User.collection.doc(user.id).update({ profilePicture: photoURL });
+                user.profilePicture = photoURL;
             }
         }
 
-        // 4. Respond with Token
         res.json({
             user: {
                 _id: user.id,
@@ -112,6 +115,11 @@ exports.googleLogin = async (req, res) => {
 
     } catch (error) {
         console.error("Google Auth Verification Error:", error);
+        try {
+            const fs = require('fs');
+            fs.writeFileSync('auth_error.log', `Error: ${error.message}\nStack: ${error.stack}\nToken: ${token ? token.substring(0, 20) + '...' : 'None'}`);
+        } catch (filesErr) { console.error('Failed to write log', filesErr); }
+
         res.status(401).json({ message: 'Google Auth Failed', details: error.message });
     }
 };

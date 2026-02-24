@@ -10,13 +10,14 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^4.19.2",
     "firebase-admin": "^13.6.0",
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.9.7",
     "nodemailer": "^7.0.11",
+    "razorpay": "^2.9.6",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7"
   },

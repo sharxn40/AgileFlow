@@ -1,39 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MdSearch, MdNotificationsNone, MdHelpOutline, MdExpandMore, MdMenu } from 'react-icons/md';
-import ProfileModal from './ProfileModal';
 import NotificationBell from './NotificationBell';
 import './TopNav.css';
 
-const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'overview', onViewChange }) => {
-    const [user, setUser] = useState({ username: 'User', picture: '' });
-    const [activeDropdown, setActiveDropdown] = useState(null); // 'help', 'notifications', or null
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        } else {
-            // Seed a realistic initial user for the "Original Site Look"
-            const initialUser = {
-                username: 'Alex Morgan',
-                title: 'Senior Product Designer',
-                email: 'alex.morgan@agileflow.team',
-                bio: 'Passionate about creating intuitive user experiences and clean functional interfaces. Based in San Francisco.',
-                picture: '', // Empty initially, user can upload
-                banner: '',
-                location: 'San Francisco, CA',
-                joinDate: 'Joined January 2024'
-            };
-            setUser(initialUser);
-            localStorage.setItem('user', JSON.stringify(initialUser));
-        }
-    }, []);
-
-    const handleUpdateUser = (updatedUser) => {
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-    };
+const TopNav = ({
+    onToggleSidebar,
+    searchTerm,
+    onSearchChange,
+    currentView = 'overview',
+    onViewChange,
+    user = { username: 'Guest' }, // Default prop
+    onOpenProfile
+}) => {
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
     const toggleDropdown = (name) => {
         if (activeDropdown === name) {
@@ -42,12 +21,6 @@ const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'ov
             setActiveDropdown(name);
         }
     };
-
-    const notifications = [
-        { id: 1, text: "Task 'Design System' is overdue", time: "2m ago", read: false },
-        { id: 2, text: "New comment from Sarah", time: "1h ago", read: true },
-        { id: 3, text: "Project 'Alpha' created", time: "5h ago", read: true }
-    ];
 
     const helpLinks = [
         { label: "Documentation", url: "#" },
@@ -58,30 +31,13 @@ const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'ov
     return (
         <header className="app-topnav">
             <div className="topnav-center-nav">
-                <button
-                    className={`nav-pill ${currentView === 'overview' ? 'active' : ''}`}
-                    onClick={() => onViewChange && onViewChange('overview')}
-                >
-                    Overview
-                </button>
-                <button
-                    className={`nav-pill ${currentView === 'board' ? 'active' : ''}`}
-                    onClick={() => onViewChange && onViewChange('board')}
-                >
-                    Board
-                </button>
-                <button
-                    className={`nav-pill ${currentView === 'analytics' ? 'active' : ''}`}
-                    onClick={() => onViewChange && onViewChange('analytics')}
-                >
-                    Analytics
-                </button>
-                <button
-                    className={`nav-pill ${currentView === 'backlog' ? 'active' : ''}`}
-                    onClick={() => onViewChange && onViewChange('backlog')}
-                >
-                    Sprints
-                </button>
+                <h2 className="current-view-title">
+                    {currentView === 'overview' && 'Dashboard Overview'}
+                    {currentView === 'board' && 'Kanban Board'}
+                    {currentView === 'analytics' && 'Analytics & Reports'}
+                    {currentView === 'backlog' && 'Sprint Backlog'}
+                    {currentView === 'calendar' && 'Calendar'}
+                </h2>
             </div>
 
             <div className="topnav-search-wrapper">
@@ -119,7 +75,7 @@ const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'ov
 
                 <div className="divider-vertical"></div>
 
-                <div className="user-profile-trigger" onClick={() => setIsProfileOpen(true)}>
+                <div className="user-profile-trigger" onClick={onOpenProfile}>
                     <div className="user-avatar-small">
                         {user.picture ? (
                             <img src={user.picture} alt="profile" />
@@ -131,14 +87,7 @@ const TopNav = ({ onToggleSidebar, searchTerm, onSearchChange, currentView = 'ov
                     <MdExpandMore className="dropdown-icon" />
                 </div>
             </div>
-
-            <ProfileModal
-                isOpen={isProfileOpen}
-                onClose={() => setIsProfileOpen(false)}
-                user={user}
-                onUpdateUser={handleUpdateUser}
-            />
-        </header>
+        </header >
     );
 };
 

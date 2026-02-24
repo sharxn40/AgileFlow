@@ -30,8 +30,13 @@ class Issue {
             originalEstimate: cleanData.originalEstimate || 0, // Minutes
             remainingEstimate: cleanData.remainingEstimate || 0, // Minutes
             timeSpent: cleanData.timeSpent || 0, // Minutes
+            subtasks: cleanData.subtasks || [], // Array of { id, title, done }
             comments: [], // Array of { id, text, userId, createdAt }
             history: [], // Activity log
+            // Payment Tracking
+            paymentAmount: cleanData.paymentAmount || 0,
+            isPaid: false,
+            paymentStatus: 'Pending', // 'Pending', 'Approved', 'Processing', 'Paid', 'Rejected'
             createdAt: now,
             updatedAt: now
         };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaChartPie, FaUsers, FaShieldAlt, FaCog, FaHistory, FaSignOutAlt } from 'react-icons/fa';
+import { FaChartPie, FaUsers, FaShieldAlt, FaCog, FaHistory, FaSignOutAlt, FaCreditCard } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './AdminSidebar.css';
 
@@ -10,6 +10,7 @@ const AdminSidebar = () => {
     const menuItems = [
         { path: '/admin', icon: <FaChartPie />, label: 'Dashboard' },
         { path: '/admin/users', icon: <FaUsers />, label: 'User Management' },
+        { path: '/admin/payments', icon: <FaCreditCard />, label: 'Payments' },
         { path: '/admin/roles', icon: <FaShieldAlt />, label: 'Roles & Permissions' },
         { path: '/admin/logs', icon: <FaHistory />, label: 'Audit Logs' },
         { path: '/admin/settings', icon: <FaCog />, label: 'Settings' },

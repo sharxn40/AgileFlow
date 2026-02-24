@@ -54,7 +54,7 @@ exports.createTask = async (req, res) => {
         console.log('Request body:', req.body);
         console.log('User from token:', req.user);
 
-        const { title, content, priority, deadline, tag, assigneeId, projectId } = req.body;
+        const { title, content, priority, deadline, tag, assigneeId, dueDate, projectId } = req.body;
 
         // Ensure we have a valid user ID
         if (!req.user || !req.user.id) {
@@ -69,7 +69,7 @@ exports.createTask = async (req, res) => {
             title,
             content: content || title,
             priority,
-            deadline,
+            dueDate: dueDate || deadline, // Save as dueDate (standardize)
             tag,
             assigneeId: effectiveAssigneeId,
             status: 'To Do',

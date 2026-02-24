@@ -165,17 +165,15 @@ exports.getBurndownData = async (req, res) => {
 
             let dailyRemainingPoints = 0;
 
+            // Fallback: If total sprint points are 0 (user didn't estimate), treat each task as 1 point (Task Count Burndown)
+            const allPointsZero = sprintIssues.every(i => !i.storyPoints || i.storyPoints == 0);
+
             sprintIssues.forEach(issue => {
                 // Check issue status at end of this specific day
-                // We look at 'history'
-                // If issue was created AFTER this day, it contributes 0 (or strictly speaking it shouldn't exist yet)
                 const created = new Date(issue.createdAt);
                 if (created > endOfDay) return;
 
-                // Find the status of the issue at `endOfDay`
-                // Iterate history events in chronological order
-                let statusAtEOD = 'To Do'; // Default initial
-
+                let statusAtEOD = 'To Do';
                 if (issue.history && Array.isArray(issue.history)) {
                     issue.history.forEach(event => {
                         const eventTime = new Date(event.timestamp);
@@ -183,27 +181,27 @@ exports.getBurndownData = async (req, res) => {
                             if (event.action === 'status_change') {
                                 statusAtEOD = event.to;
                             }
-                            // If we tracked creation status, we'd use that, but usually starts To Do
                         }
                     });
                 } else {
-                    // Fallback if no history: use current status if the day is Today or later?
-                    // This is imperfect. If no history, we assume it's 'To Do' unless it's currently Done?
-                    // Let's assume 'To Do' if we can't prove it was Done then. 
-                    // Or if current status is Done, we check updated_at?
-                    // Better fallback: if current status is Done, assume it was done at updatedAt.
-                    // This is getting complex.
-                    // Simplified: If no history, just use current status (flat line).
                     statusAtEOD = issue.status;
                 }
 
+                // DEBUG LOG
+                if (date.toDateString() === new Date().toDateString()) {
+                    console.log(`[Burndown] Today - Issue ${issue.issueId} (${issue.id}) Status: ${statusAtEOD} (Real Status: ${issue.status})`);
+                }
+
                 if (statusAtEOD !== 'Done') {
-                    dailyRemainingPoints += (parseInt(issue.storyPoints) || 0);
+                    const points = parseInt(issue.storyPoints) || 0;
+                    dailyRemainingPoints += (allPointsZero ? 1 : points);
                 }
             });
 
-            // Ideal Line: Linear decay from Total at Start to 0 at End
-            const totalSprintPoints = sumPoints(sprintIssues);
+            // Ideal Line Calculation
+            let totalSprintPoints = sumPoints(sprintIssues);
+            if (totalSprintPoints === 0 && allPointsZero) totalSprintPoints = sprintIssues.length;
+
             const totalDuration = (new Date(sprint.endDate) - startDate);
             const elapsed = (date - startDate);
             let ideal = totalSprintPoints;
@@ -223,5 +221,65 @@ exports.getBurndownData = async (req, res) => {
     } catch (error) {
         console.error('Burndown Error:', error);
         res.status(500).json({ message: 'Error fetching burndown data' });
+    }
+};
+
+exports.getUserWorkload = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        if (!projectId) return res.status(400).json({ message: 'Project ID required' });
+
+        // 1. Fetch Issues
+        const allIssues = await Issue.findAll();
+        const projectIssues = allIssues.filter(i => i.projectId === projectId);
+
+        // 2. Fetch Users to map IDs
+        const assigneeIds = [...new Set(projectIssues.map(i => i.assigneeId).filter(id => id))];
+        const users = await Promise.all(assigneeIds.map(uid => User.findByPk(uid)));
+        const userMap = {};
+        users.forEach(u => {
+            if (u) userMap[u.id] = u.username || u.email;
+        });
+
+        // 3. Aggregate Data
+        // Structure: { "UserId": { user: "Name", "To Do": 0, "In Progress": 0, "Done": 0 } }
+        const workloadMap = {};
+
+        // Initialize for known users
+        assigneeIds.forEach(uid => {
+            if (userMap[uid]) {
+                workloadMap[uid] = {
+                    name: userMap[uid],
+                    "To Do": 0,
+                    "In Progress": 0,
+                    "Done": 0
+                };
+            }
+        });
+
+        // Add "Unassigned" bucket if needed, but let's stick to assigned for now or handle unassigned
+
+        projectIssues.forEach(issue => {
+            if (issue.assigneeId && workloadMap[issue.assigneeId]) {
+                // Normalize status to 3 categories if needed, or use raw status
+                // For simplicity, let's use exact status if standard, else map?
+                // The prompt asked for "To Do, In Progress, Done".
+                const status = issue.status || 'To Do';
+                if (workloadMap[issue.assigneeId][status] !== undefined) {
+                    workloadMap[issue.assigneeId][status]++;
+                } else {
+                    // Fallback for other statuses
+                    if (!workloadMap[issue.assigneeId]['Other']) workloadMap[issue.assigneeId]['Other'] = 0;
+                    workloadMap[issue.assigneeId]['Other']++;
+                }
+            }
+        });
+
+        const workloadData = Object.values(workloadMap);
+        res.json(workloadData);
+
+    } catch (error) {
+        console.error('Workload Error:', error);
+        res.status(500).json({ message: 'Error fetching workload data' });
     }
 };

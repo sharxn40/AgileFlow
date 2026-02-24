@@ -3,6 +3,8 @@ import { useOutletContext, useParams } from 'react-router-dom';
 import KanbanCard from '../components/dashboard/KanbanCard';
 import CreateTaskModal from '../components/dashboard/CreateTaskModal';
 import ConfirmationModal from '../components/ConfirmationModal';
+import InviteMemberModal from '../components/project/InviteMemberModal';
+import { FaUserPlus } from 'react-icons/fa';
 import './TaskBoard.css';
 
 const TaskBoard = () => {
@@ -19,14 +21,15 @@ const TaskBoard = () => {
 
     // Delete states
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
 
     const fetchBoard = async () => {
         try {
-            setLoading(true);
+            // setLoading(true); // Don't show loading spinner on background refresh
             const token = localStorage.getItem('token');
-            // Fetch from new Project Board API
-            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/board`, {
+            // Cache bust with timestamp
+            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/board?t=${Date.now()}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -42,6 +45,11 @@ const TaskBoard = () => {
     };
 
     const organizeIssues = (issues, columnNames) => {
+        if (!Array.isArray(issues)) {
+            console.error("organizeIssues: issues is not an array", issues);
+            return;
+        }
+
         const newColumns = {};
         // Initialize columns based on Board Config
         columnNames.forEach(name => {
@@ -52,6 +60,8 @@ const TaskBoard = () => {
 
         // Distribute issues
         issues.forEach(issue => {
+            if (!issue || !issue.status) return; // Skip invalid issues
+
             let statusKey = issue.status.toLowerCase().replace(/\s+/g, '');
             // Fallback for mapped statuses
             if (!newColumns[statusKey]) {
@@ -72,7 +82,12 @@ const TaskBoard = () => {
     };
 
     useEffect(() => {
-        if (projectId) fetchBoard();
+        if (projectId) {
+            setLoading(true); // Initial load
+            fetchBoard();
+            const interval = setInterval(fetchBoard, 5000); // Poll every 5s
+            return () => clearInterval(interval);
+        }
     }, [projectId]);
 
 
@@ -243,8 +258,8 @@ const TaskBoard = () => {
         <div className="taskboard-page">
             <div className="board-header">
                 <div className="board-info">
-                    <h2>{boardData?.board?.name || 'Board'}</h2>
-                    {boardData?.activeSprint && <span className="sprint-badge">{boardData.activeSprint.name}</span>}
+                    <h1 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#172B4D', margin: 0 }}>{boardData?.board?.name || 'Board'}</h1>
+                    {boardData?.activeSprint && <span className="sprint-badge" style={{ fontSize: '0.8rem', background: '#DEEBFF', color: '#0052CC', padding: '2px 10px', borderRadius: '100px', fontWeight: '600' }}>{boardData.activeSprint.name}</span>}
                 </div>
 
                 <div className="board-actions">
@@ -260,9 +275,18 @@ const TaskBoard = () => {
                             </div>
                         )}
                     </div>
+                    <button className="btn-secondary small" onClick={() => setIsInviteModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <FaUserPlus /> Invite
+                    </button>
                     <button className="btn-primary small" onClick={() => setIsCreateModalOpen(true)}>Create Issue</button>
                 </div>
             </div>
+
+            <InviteMemberModal
+                isOpen={isInviteModalOpen}
+                onClose={() => setIsInviteModalOpen(false)}
+                projectId={projectId}
+            />
 
             <div className="kanban-columns-container">
                 {Object.entries(displayColumns).map(([colId, col]) => (

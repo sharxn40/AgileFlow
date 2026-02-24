@@ -1,11 +1,15 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const PrivateRoute = ({ allowedRoles }) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const token = localStorage.getItem('token');
+const PrivateRoute = ({ children, allowedRoles }) => {
+    const { user, loading } = useAuth();
 
-    if (!token || !user) {
+    if (loading) {
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#F4F5F7' }}>Loading session...</div>;
+    }
+
+    if (!user) {
         return <Navigate to="/login" replace />;
     }
 
@@ -13,7 +17,7 @@ const PrivateRoute = ({ allowedRoles }) => {
         return <Navigate to="/dashboard" replace />;
     }
 
-    return <Outlet />;
+    return children ? children : <Outlet />;
 };
 
 export default PrivateRoute;

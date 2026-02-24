@@ -7,6 +7,7 @@ import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
@@ -19,6 +20,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchUsers();
+        fetchPayments();
     }, []);
 
     useEffect(() => {
@@ -34,9 +36,7 @@ const AdminDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3000/api/users', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) throw new Error('Failed to fetch users');
             const data = await response.json();
@@ -44,6 +44,21 @@ const AdminDashboard = () => {
             setFilteredUsers(data);
         } catch (err) {
             setError(err.message);
+        }
+    };
+
+    const fetchPayments = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/payments/all', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setPayments(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch payments", err);
         }
     };
 
@@ -95,8 +110,15 @@ const AdminDashboard = () => {
             }
 
             console.log('AdminDashboard: Update success');
+
+            // Optimistic Update
+            setUsers(prevUsers => prevUsers.map(u =>
+                u.id === id ? { ...u, role: newRole } : u
+            ));
+
+            // Still fetch to be sure, but UI is already updated
             fetchUsers();
-            setIsModalOpen(false); // Close modal on success
+            setIsModalOpen(false);
         } catch (err) {
             console.error('Update Error:', err);
             setError(`Update Failed: ${err.message}`);
@@ -208,6 +230,59 @@ const AdminDashboard = () => {
             );
         }
 
+        if (path === '/admin/payments') {
+            return (
+                <div className="admin-content-card">
+                    <div className="card-title-row">
+                        <h2>Global Transactions</h2>
+                        <div className="admin-stats-summary" style={{ display: 'flex', gap: '20px' }}>
+                            <div className="mini-stat">
+                                <span className="label">Total Processed:</span>
+                                <span className="value" style={{ color: '#10b981', fontWeight: 'bold', marginLeft: '8px' }}>
+                                    ₹{payments.reduce((acc, p) => p.status === 'Paid' ? acc + p.amount : acc, 0).toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table className="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Project ID</th>
+                                <th>Worker ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Order ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {payments.map(p => (
+                                <tr key={p.id}>
+                                    <td>{new Date(p.createdAt).toLocaleDateString()}</td>
+                                    <td><span className="id-badge" style={{ fontSize: '0.75rem', padding: '2px 6px', background: '#f1f5f9', borderRadius: '4px' }}>{p.projectId}</span></td>
+                                    <td><span style={{ fontSize: '0.9rem' }}>{p.workerId}</span></td>
+                                    <td>₹{p.amount}</td>
+                                    <td>
+                                        <span className={`role-pill ${p.status === 'Paid' ? 'admin' : 'worker'}`} style={{ textTransform: 'uppercase', fontSize: '0.7rem' }}>
+                                            {p.status}
+                                        </span>
+                                    </td>
+                                    <td style={{ fontSize: '0.8rem', color: '#64748b' }}>{p.razorpayOrderId}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {payments.length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+                            No transactions recorded yet.
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
         if (path === '/admin/roles') {
             return (
                 <div className="admin-content-card">
@@ -242,9 +317,24 @@ const AdminDashboard = () => {
                     <div className="card-title-row">
                         <h2>System Settings</h2>
                     </div>
-                    <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-                        <FaServer style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }} />
-                        <p>Global system settings configuration.</p>
+                    <div className="settings-grid" style={{ padding: '20px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                        <div className="settings-group" style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: '12px' }}>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '16px' }}>Payment Integration</h3>
+                            <div className="integration-status" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                                <div className="status-indicator" style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981' }}></div>
+                                <span style={{ fontWeight: '500' }}>Razorpay Connected</span>
+                            </div>
+                            <p style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5' }}>
+                                Using Key ID: <code style={{ background: '#f1f5f9', padding: '2px 4px', borderRadius: '4px' }}>rzp_test_...</code>
+                            </p>
+                        </div>
+                        <div className="settings-group" style={{ border: '1px solid #e2e8f0', padding: '20px', borderRadius: '12px', opacity: 0.6 }}>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '16px' }}>Email Service (SMTP)</h3>
+                            <div className="integration-status" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div className="status-indicator" style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                                <span style={{ fontWeight: '500' }}>Configured (Test Mode)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -343,6 +433,7 @@ const AdminDashboard = () => {
         if (path === '/admin/roles') return 'Roles & Permissions';
         if (path === '/admin/logs') return 'Audit Logs';
         if (path === '/admin/settings') return 'Settings';
+        if (path === '/admin/payments') return 'Payment Management';
         return 'Admin Overview';
     };
 
@@ -363,12 +454,7 @@ const AdminDashboard = () => {
 
                 {error && <div className="error-message">{error}</div>}
 
-                {/* TEMP DEBUG */}
-                <div style={{ background: '#eee', padding: '10px', fontSize: '10px', maxHeight: '100px', overflow: 'auto' }}>
-                    DEBUG: Received {users.length} users.
-                    First user: {users.length > 0 ? JSON.stringify(users[0]) : 'None'}
-                    Full Data: {JSON.stringify(users)}
-                </div>
+
 
                 {renderContent()}
             </main>

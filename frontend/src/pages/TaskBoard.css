@@ -13,9 +13,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--theme-border);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .board-header h1 {
@@ -72,9 +72,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 10px;
-    background: #f4f5f7;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: transparent;
     border-radius: 4px;
 }
 
@@ -102,25 +102,19 @@
 
 /* Droppable Area */
 .column-droppable-area {
-    background-color: var(--theme-bg-secondary);
+    background-color: #EBECF0;
+    /* Slightly darker for better contrast */
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
     flex: 1;
     transition: background-color 0.2s ease;
-    border: 1px dashed transparent;
+    border: 1px solid transparent;
     min-height: 150px;
-    /* User fix: Ensure scrolling happens internally */
     overflow-y: auto;
-    /* 
-       Constrain max-height if flex basis fails, 
-       but reliant on parent height usually works if parent is fixed.
-       Adding a fallback max-height just in case.
-    */
-    /* Ensure full height available */
-    height: calc(100% - 40px);
-    overflow-y: auto;
-    /* Soften background */
-    background-color: #F4F5F7;
+    height: auto;
+    /* Let flex grow it */
+    max-height: calc(100vh - 280px);
+    /* Safety constraint */
 }
 
 /* Jira-like Drop Target Highlight */

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import { GoogleLogin } from '@react-oauth/google'; // Unused
-import { jwtDecode } from "jwt-decode";
+import { useGoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 const AuthPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isSignUp, setIsSignUp] = useState(false);
 
     // Form States
@@ -50,12 +51,10 @@ const AuthPage = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                if (rememberMe) {
-                    localStorage.setItem('rememberbox', 'true');
-                }
-                navigate('/dashboard');
+                login(data.user, data.token);
+                if (rememberMe) localStorage.setItem('rememberbox', 'true');
+                if (data.user.role === 'admin') navigate('/admin');
+                else navigate('/dashboard');
             } else { setError(data.message); }
         } catch (err) { setError('Failed to connect to server'); }
     };
@@ -79,68 +78,44 @@ const AuthPage = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                login(data.user, data.token);
                 navigate('/dashboard');
             } else { setError(data.message); }
         } catch (err) { setError('Failed to connect to server'); }
     };
 
-    const handleMockGoogleLogin = async (isSignUpMode) => {
-        // Simulate Network Delay
-        await new Promise(r => setTimeout(r, 800));
-
-        const mockUser = {
-            username: 'Google User',
-            email: 'google.user@example.com',
-            picture: '', // Mock Google Avatar
-            role: 'user'
-        };
-
-        const mockToken = 'mock-google-token-12345';
-
-        localStorage.setItem('token', mockToken);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        navigate('/dashboard');
-    };
-
-    const handleGoogleSuccess = async (credentialResponse) => {
-        if (isSignUp) {
-            // Auto-fill Logic for Sign Up
+    // Real Google OAuth — always shows account picker
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
             try {
-                const decoded = jwtDecode(credentialResponse.credential);
-                setRegisterData(prev => ({
-                    ...prev,
-                    username: decoded.name,
-                    email: decoded.email
-                    // Password left blank
-                }));
-                setError('');
-            } catch (err) {
-                setError('Failed to get details from Google');
-            }
-        } else {
-            // Direct Login for Sign In
-            try {
+                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+                const userInfo = await userInfoRes.json();
+
                 const response = await fetch('http://localhost:3000/api/auth/google', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: credentialResponse.credential }),
+                    body: JSON.stringify({ token: tokenResponse.access_token, userInfo }),
                 });
                 const data = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    navigate('/dashboard');
+                    login(data.user, data.token);
+                    if (data.user.role === 'admin') navigate('/admin');
+                    else navigate('/dashboard');
                 } else {
                     setError(data.message || 'Google Login Failed');
                 }
             } catch (err) {
-                setError('Failed to connect to server during Google Auth');
+                console.error("AuthPage Connection Error:", err);
+                setError(`Failed to connect to backend at http://localhost:3000. Error: ${err.message}`);
             }
-        }
-    };
+        },
+        onError: () => setError('Google Login Failed. Please try again.'),
+        prompt: 'select_account',
+        flow: 'implicit',
+    });
 
     return (
         <div className="auth-body">
@@ -155,7 +130,7 @@ const AuthPage = () => {
                         <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                             <button
                                 type="button"
-                                onClick={() => handleMockGoogleLogin(true)}
+                                onClick={() => handleGoogleLogin()}
                                 className="google-btn"
                                 style={{
                                     display: 'flex',
@@ -179,7 +154,7 @@ const AuthPage = () => {
                                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
                             >
                                 <FaGoogle style={{ color: '#4285F4' }} />
-                                {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
+                                Sign up with Google
                             </button>
                         </div>
 
@@ -267,7 +242,7 @@ const AuthPage = () => {
                         <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                             <button
                                 type="button"
-                                onClick={() => handleMockGoogleLogin(false)}
+                                onClick={() => handleGoogleLogin()}
                                 className="google-btn"
                                 style={{
                                     display: 'flex',

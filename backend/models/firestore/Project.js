@@ -12,6 +12,10 @@ class Project {
             description: projectData.description || '',
             workflow: projectData.workflow || ['To Do', 'In Progress', 'Done'],
             members: projectData.members || [projectData.leadId], // Lead is automatically a member
+            // Payment & Budget Config
+            budget: projectData.budget || 0,
+            paymentModel: projectData.paymentModel || 'None', // 'Fixed', 'PerTask', 'PerStoryPoint', 'Milestone'
+            budgetDistribution: projectData.budgetDistribution || {}, // Rules for distribution
             createdAt: now,
             updatedAt: now
         };

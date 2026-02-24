@@ -3,16 +3,16 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(9, 30, 66, 0.4);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
+    right: 0;
+    bottom: 0;
+    background: rgba(9, 30, 66, 0.54);
+    z-index: 10000;
+    /* Portal High Z-Index */
     display: flex;
     justify-content: flex-end;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
 }
 
 .issue-drawer-overlay.open {
@@ -22,11 +22,12 @@
 
 /* Drawer Container */
 .issue-drawer {
-    width: 60%;
-    max-width: 800px;
-    height: 100vh;
-    background: #FFFFFF;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    width: 900px;
+    /* Wider drawer */
+    max-width: 90%;
+    height: 100%;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
     transform: translateX(100%);
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
@@ -260,4 +261,132 @@
 .btn-save:disabled {
     background: #B3D4FF;
     cursor: not-allowed;
+}
+
+/* Subtasks Section */
+.subtasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #FAFBFC;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #EBECF0;
+}
+
+.subtask-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #EBECF0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #36B37E;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5E6C84;
+}
+
+.subtask-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subtask-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 8px 12px;
+    border: 1px solid #DFE1E6;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.subtask-item:hover {
+    border-color: #B3BAC5;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.05);
+}
+
+.subtask-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #0052CC;
+}
+
+.subtask-input {
+    flex: 1;
+    border: none;
+    font-size: 0.95rem;
+    color: #172B4D;
+    background: transparent;
+}
+
+.subtask-input:focus {
+    outline: none;
+}
+
+.subtask-input.completed {
+    text-decoration: line-through;
+    color: #6B778C;
+}
+
+.delete-subtask-btn {
+    background: none;
+    border: none;
+    color: #6B778C;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    padding: 4px;
+}
+
+.subtask-item:hover .delete-subtask-btn {
+    opacity: 1;
+}
+
+.delete-subtask-btn:hover {
+    color: #DE350B;
+}
+
+.add-subtask-wrapper {
+    margin-top: 8px;
+}
+
+.add-subtask-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px dashed #DFE1E6;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+    color: #172B4D;
+    transition: all 0.2s;
+}
+
+.add-subtask-input:focus {
+    border-style: solid;
+    border-color: #4C9AFF;
+    outline: none;
+    background: #FFFFFF;
+}
+
+.add-subtask-input::placeholder {
+    color: #6B778C;
 }

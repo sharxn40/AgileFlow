@@ -158,6 +158,49 @@
     text-overflow: ellipsis;
 }
 
+/* Project Sub Navigation */
+.project-group {
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.project-sub-nav {
+    display: flex;
+    flex-direction: column;
+    padding-left: 36px;
+    margin-top: 4px;
+    gap: 2px;
+}
+
+.sub-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #6B778C;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.sub-item:hover {
+    background: #F4F5F7;
+    color: #172B4D;
+}
+
+.sub-item.active {
+    color: #0052CC;
+    background: #E6F0FF;
+}
+
+.sub-icon {
+    font-size: 1rem;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+
 /* Footer */
 .sidebar-footer {
     padding: 24px 0;

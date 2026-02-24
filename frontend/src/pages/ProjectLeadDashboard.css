@@ -168,13 +168,23 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .member-card-header {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F4F5F7;
 }
 
 .member-avatar-large {
@@ -189,6 +199,8 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0, 82, 204, 0.3);
+    position: relative;
+    /* For dot context */
 }
 
 .member-info h4 {
@@ -203,95 +215,135 @@
     color: #6B778C;
 }
 
-.task-count-badge {
+/* Workload Badges */
+.workload-badge {
     margin-left: auto;
-    background: #EBECF0;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #42526E;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
-.member-tasks-scroll {
-    flex: 1;
+.workload-badge.low {
+    background: #E3FCEF;
+    color: #006644;
+}
+
+.workload-badge.balanced {
+    background: #DEEBFF;
+    color: #0052CC;
+}
+
+.workload-badge.overloaded {
+    background: #FFEBE6;
+    color: #DE350B;
+}
+
+/* Risk Indicators */
+.risk-dot-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background: #FF5630;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.member-risk-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+}
+
+.risk-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #5E6C84;
+}
+
+.risk-item.risk-critical {
+    color: #DE350B;
+    font-weight: 700;
+}
+
+.risk-item.risk-warning {
+    color: #FFAB00;
+    font-weight: 600;
+}
+
+.card-overload {
+    border: 1px solid #FFBDAD;
+    background: #FFF5F5;
+}
+
+/* Member Preview */
+.member-tasks-preview {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    margin-top: auto;
+    /* Push to bottom */
 }
 
-.mini-task-row {
+.preview-label {
+    font-size: 0.75rem;
+    color: #97A0AF;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.mini-preview-task {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    gap: 8px;
+    padding: 6px;
     background: #FAFBFC;
-    border: 1px solid #DFE1E6;
-    border-radius: 8px;
-    transition: background 0.2s;
+    border-radius: 4px;
 }
 
-.mini-task-row:hover {
-    background: white;
-    border-color: #0052CC;
+.preview-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
 }
 
-.mini-task-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow: hidden;
+.preview-dot.high {
+    background: #FF5630;
 }
 
-.task-status-icon {
-    font-size: 1rem;
-    color: #36B37E;
-    /* Default completed color */
+.preview-dot.medium {
+    background: #FFAB00;
 }
 
-/* Priority coloration overrides */
-.p-priority-high .task-status-icon {
-    color: #FF5630;
+.preview-dot.low {
+    background: #36B37E;
 }
 
-.p-priority-medium .task-status-icon {
-    color: #FFAB00;
-}
-
-.p-priority-low .task-status-icon {
-    color: #36B37E;
-}
-
-.mini-task-title {
-    font-size: 0.9rem;
-    font-weight: 500;
+.preview-title {
+    font-size: 0.85rem;
     color: #172B4D;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.mini-reassign-btn {
-    background: none;
-    border: none;
-    color: #B3BAC5;
-    cursor: pointer;
-    padding: 4px;
-    transition: color 0.2s;
-}
-
-.mini-reassign-btn:hover {
-    color: #0052CC;
-}
-
-.empty-tasks-placeholder {
-    padding: 30px;
-    text-align: center;
+.preview-empty {
+    font-size: 0.85rem;
     color: #97A0AF;
     font-style: italic;
-    background: #FAFBFC;
-    border-radius: 8px;
-    border: 1px dashed #DFE1E6;
+    padding: 8px 0;
+}
+
+.more-tasks {
+    font-size: 0.75rem;
+    color: #0052CC;
+    font-weight: 600;
+    text-align: right;
 }
 
 /* Modal */

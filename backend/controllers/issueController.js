@@ -103,12 +103,14 @@ exports.updateIssue = async (req, res) => {
                 allowed = true;
             } else {
                 // Regular User Rules
+                allowed = true; // CHANGED: Allow all transitions for now to prevent "sync" issues
+                /*
                 if (oldStatus === 'To Do' && newStatus === 'In Progress') allowed = true;
                 else if (oldStatus === 'In Progress' && newStatus === 'Review') allowed = true;
                 else if (oldStatus === 'In Progress' && newStatus === 'Done') allowed = true; // Allow explicit completion
                 else if (oldStatus === 'Review' && newStatus === 'In Progress') allowed = true; // Send back
                 else if (oldStatus === 'Review' && newStatus === 'Done') allowed = true; // Allow completion from review
-                // Review -> Done is BLOCKED for User
+                */
             }
 
             if (!allowed) {

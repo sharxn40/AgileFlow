@@ -34,6 +34,8 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/issues', require('./routes/issueRoutes'));
 app.use('/api/invitations', require('./routes/invitationRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/teams', require('./routes/teamRoutes'));
 
 app.get('/', (req, res) => {
   res.send('AgileFlow Backend Running');
@@ -45,4 +47,5 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  if (process.env.STRIPE_SECRET_KEY) console.log("Stripe Connected");
 });

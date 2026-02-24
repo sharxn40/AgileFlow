@@ -9,16 +9,16 @@ router.get('/active', protect, sprintController.getActiveSprint);
 
 // Admin / Lead: Create new sprint
 // Admin / Lead / User: Create new sprint
-router.post('/', protect, authorize(['admin', 'project-lead', 'user']), sprintController.createSprint);
+router.post('/', protect, authorize('admin', 'project-lead', 'user'), sprintController.createSprint);
 
 // Sprint Lifecycle (Lead/Admin/User)
-router.post('/:id/start', protect, authorize(['admin', 'project-lead', 'user']), sprintController.startSprint);
-router.post('/:id/complete', protect, authorize(['admin', 'project-lead', 'user']), sprintController.completeSprint);
+router.post('/:id/start', protect, authorize('admin', 'project-lead', 'user'), sprintController.startSprint);
+router.post('/:id/complete', protect, authorize('admin', 'project-lead', 'user'), sprintController.completeSprint);
 
 // Analytics
 const analyticsController = require('../controllers/analyticsController');
 router.get('/:projectId/velocity', protect, analyticsController.getVelocityData);
-router.get('/:projectId/activity', protect, analyticsController.getRecentActivity); // New Route
+// router.get('/:projectId/activity', protect, analyticsController.getRecentActivity); // MOVED to projectRoutes
 router.get('/:sprintId/burndown', protect, analyticsController.getBurndownData);
 
 module.exports = router;

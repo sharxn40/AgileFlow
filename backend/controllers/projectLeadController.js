@@ -6,8 +6,18 @@ const Notification = require('../models/firestore/Notification');
 exports.getDashboardStats = async (req, res) => {
     try {
         const leadId = req.user.id;
-        // Find project led by this user
-        const project = await Project.findOne({ where: { leadId } });
+        const { projectId } = req.query;
+
+        let project;
+        if (projectId) {
+            project = await Project.findByPk(projectId);
+            if (project && project.leadId !== leadId) {
+                return res.status(403).json({ message: 'Not authorized' });
+            }
+        } else {
+            // Fallback: Find first project led by this user
+            project = await Project.findOne({ where: { leadId } });
+        }
 
         if (!project) {
             return res.status(404).json({ message: 'No project found where you are the lead' });
@@ -32,6 +42,7 @@ exports.getDashboardStats = async (req, res) => {
         const teamMemberCount = project.members ? project.members.length : 0;
 
         res.json({
+            projectId: project.id,
             projectName: project.name,
             leadName: req.user.username,
             activeSprint,
@@ -47,7 +58,16 @@ exports.getDashboardStats = async (req, res) => {
 exports.getTeamOverview = async (req, res) => {
     try {
         const leadId = req.user.id;
-        const project = await Project.findOne({ where: { leadId } });
+        const { projectId } = req.query;
+
+        let project;
+        if (projectId) {
+            project = await Project.findByPk(projectId);
+            if (project && project.leadId !== leadId) return res.json([]);
+        } else {
+            project = await Project.findOne({ where: { leadId } });
+        }
+
         if (!project || !project.members) return res.json([]);
 
         let teamData = [];
@@ -59,15 +79,46 @@ exports.getTeamOverview = async (req, res) => {
                     where: { assigneeId: memberId, projectId: project.id }
                 });
 
-                // Filter out Done tasks to show active workload
+                // --- Calculate Metrics ---
                 const activeTasks = tasks.filter(t => t.status !== 'Done');
+                const doneTasks = tasks.filter(t => t.status === 'Done');
+
+                let workloadScore = 0;
+                let overdueCount = 0;
+                let riskCount = 0; // Due within 48h
+                const now = new Date();
+                const riskThreshold = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+
+                activeTasks.forEach(t => {
+                    // Workload: 1 point base, 3 for High Priority
+                    workloadScore += (t.priority === 'High' ? 3 : t.priority === 'Medium' ? 2 : 1);
+
+                    if (t.dueDate) {
+                        const due = new Date(t.dueDate);
+                        if (due < now) overdueCount++;
+                        else if (due < riskThreshold) riskCount++;
+                    }
+                });
+
+                // Workload Status: < 5 Low, 5-12 Balanced, > 12 Overloaded
+                let workloadStatus = 'Balanced';
+                if (workloadScore < 5) workloadStatus = 'Low';
+                if (workloadScore > 12) workloadStatus = 'Overloaded';
 
                 teamData.push({
                     id: user.id,
                     username: user.username,
                     email: user.email,
                     role: user.role,
-                    tasks: activeTasks
+                    tasks: activeTasks,
+                    metrics: {
+                        workloadScore,
+                        workloadStatus,
+                        overdueCount,
+                        riskCount,
+                        activeCount: activeTasks.length,
+                        doneCount: doneTasks.length
+                    }
                 });
             }
         }
@@ -110,13 +161,27 @@ exports.searchUsers = async (req, res) => {
     }
 };
 
+exports.getProjects = async (req, res) => {
+    try {
+        const leadId = req.user.id;
+        const projects = await Project.findAll({ where: { leadId } });
+        res.json(projects);
+    } catch (error) {
+        console.error("Get Projects Error:", error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 exports.inviteUser = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId, projectId } = req.body; // Accept projectId
         const leadId = req.user.id;
-        const project = await Project.findOne({ where: { leadId } });
+
+        // Find specific project AND verify ownership
+        const project = await Project.findByPk(projectId);
 
         if (!project) return res.status(404).json({ message: 'Project not found' });
+        if (project.leadId !== leadId) return res.status(403).json({ message: 'Not authorized for this project' });
 
         if (!project.members.includes(userId)) {
             const updatedMembers = [...project.members, userId];
@@ -136,5 +201,45 @@ exports.inviteUser = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Invite Error' });
+    }
+};
+
+exports.getUserDetails = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const leadId = req.user.id;
+
+        const project = await Project.findOne({ where: { leadId } });
+        if (!project || !project.members.includes(userId)) {
+            return res.status(403).json({ message: 'User not in your project' });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const tasks = await Task.findAll({
+            where: { assigneeId: userId, projectId: project.id }
+        });
+
+        res.json({
+            user: { id: user.id, username: user.username, email: user.email },
+            tasks
+        });
+    } catch (error) {
+        console.error("Detail Error:", error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+exports.updateTaskDetails = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { priority, dueDate } = req.body;
+
+        await Task.update(taskId, { priority, dueDate });
+        res.json({ message: 'Task updated' });
+    } catch (error) {
+        console.error("Update Error:", error);
+        res.status(500).json({ message: 'Update Error' });
     }
 };

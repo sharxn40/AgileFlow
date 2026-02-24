@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
-import './Layout.css'; // We will create this file for scoped layout styles
+import ProfileDrawer from './ProfileDrawer';
+import { useAuth } from '../context/AuthContext';
+import './Layout.css';
 
 const Layout = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-    const [searchTerm, setSearchTerm] = React.useState('');
-    const [currentView, setCurrentView] = React.useState('overview'); // Lifted state for TopNav pills
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentView, setCurrentView] = useState('overview');
+
+    // Connect to Auth Context
+    const { user } = useAuth();
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+    // If user is null (loading or not logged in), checking this safety.
+    // PrivateRoute guards this, but Layout might render briefly.
+    const safeUser = user || { username: 'Loading...', picture: '' };
 
     return (
         <div className="app-layout">
@@ -20,11 +30,19 @@ const Layout = () => {
                     onSearchChange={setSearchTerm}
                     currentView={currentView}
                     onViewChange={setCurrentView}
+                    user={safeUser}
+                    onOpenProfile={() => setIsProfileOpen(true)}
                 />
                 <div className="app-page-container">
                     <Outlet context={{ searchTerm, currentView }} />
                 </div>
             </div>
+
+            <ProfileDrawer
+                isOpen={isProfileOpen}
+                onClose={() => setIsProfileOpen(false)}
+                user={safeUser}
+            />
         </div>
     );
 };

@@ -14,10 +14,14 @@ const isProjectLead = (req, res, next) => {
 
 router.get('/stats', protect, isProjectLead, projectLeadController.getDashboardStats);
 router.get('/team', protect, isProjectLead, projectLeadController.getTeamOverview);
+router.get('/projects', protect, isProjectLead, projectLeadController.getProjects);
 router.put('/tasks/:taskId/reassign', protect, isProjectLead, projectLeadController.reassignTask);
 
 // Invitation Routes
 router.get('/search-users', protect, isProjectLead, projectLeadController.searchUsers);
 router.post('/invite', protect, isProjectLead, projectLeadController.inviteUser);
+
+router.get('/user-details/:userId', protect, isProjectLead, projectLeadController.getUserDetails);
+router.put('/tasks/:taskId/update', protect, isProjectLead, projectLeadController.updateTaskDetails);
 
 module.exports = router;

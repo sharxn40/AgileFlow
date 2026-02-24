@@ -39,28 +39,9 @@ const ProjectDashboard = () => {
 
     return (
         <div className="project-dashboard">
-            <div className="project-header">
-                <div className="breadcrumbs">
-                    <Link to="/dashboard">Dashboard</Link> /
-                    <span className="current"> {project.name} ({project.key})</span>
-                </div>
-                <div className="project-nav">
-                    <Link to={`/project/${projectId}/board`} className={location.pathname.includes('board') ? 'active' : ''}>Board</Link>
-                    <Link to={`/project/${projectId}/backlog`} className={location.pathname.includes('backlog') ? 'active' : ''}>Backlog & Sprints</Link>
-                    <Link to={`/project/${projectId}/reports`} className={location.pathname.includes('reports') ? 'active' : ''}>Reports</Link>
-                    <button className="btn-secondary small" onClick={() => setIsInviteModalOpen(true)} style={{ marginLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <FaUserPlus /> Invite Member
-                    </button>
-                </div>
-            </div>
             <div className="project-content">
                 <Outlet context={{ project }} />
             </div>
-            <InviteMemberModal
-                isOpen={isInviteModalOpen}
-                onClose={() => setIsInviteModalOpen(false)}
-                projectId={projectId}
-            />
         </div>
     );
 };

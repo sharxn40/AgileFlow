@@ -1,7 +1,7 @@
 import React from 'react';
 import './StatCard.css';
 
-const StatCard = ({ icon, label, value, trend, color, onClick, isActive }) => {
+const StatCard = ({ icon, label, value, trend, trendLabel, trendUp, color, onClick, isActive }) => {
     return (
         <div
             className={`stat-card ${isActive ? 'active' : ''}`}
@@ -16,10 +16,10 @@ const StatCard = ({ icon, label, value, trend, color, onClick, isActive }) => {
             </div>
             <div className="stat-value">{value}</div>
 
-            {trend !== undefined && (
-                <div className={`stat-trend ${trend >= 0 ? 'positive' : 'negative'}`}>
-                    <span>{trend > 0 ? '+' : ''}{trend}%</span>
-                    <span className="trend-label">from last week</span>
+            {(trend || label) && (
+                <div className={`stat-trend ${trendUp ? 'positive' : 'negative'}`}>
+                    <span style={{ fontWeight: 600 }}>{trend}</span>
+                    {trendLabel && <span className="trend-label" style={{ marginLeft: '4px', opacity: 0.8 }}>{trendLabel}</span>}
                 </div>
             )}
         </div>

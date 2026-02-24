@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom'; // Import ReactDOM
 import { FaTimes, FaProjectDiagram, FaCheck } from 'react-icons/fa';
 import './CreateProjectModal.css';
 
@@ -43,13 +44,36 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
         setFormData({ ...formData, color: color });
     };
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        console.log('Modal: Submit clicked', formData);
 
-        if (!formData.name.trim()) return;
+        if (!formData.name.trim()) {
+            setError('Project Name is required');
+            return;
+        }
 
+        // Validate Key (Alphanumeric)
+        const keyRegex = /^[A-Z0-9]+$/;
+        if (!keyRegex.test(formData.key)) {
+            setError('Project Key must be alphanumeric (A-Z, 0-9)');
+            return;
+        }
+
+        // Validate Date (Future only if set)
+        if (formData.dueDate) {
+            const selectedDate = new Date(formData.dueDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
+                setError('Due Date cannot be in the past');
+                return;
+            }
+        }
+
+        setIsLoading(true);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch('http://localhost:3000/api/projects', {
@@ -60,9 +84,10 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                 },
                 body: JSON.stringify({
                     name: formData.name,
-                    key: formData.key, // Use manual key
+                    key: formData.key,
                     description: formData.description,
-                    leadId: null
+                    leadId: null,
+                    dueDate: formData.dueDate
                 })
             });
 
@@ -77,10 +102,13 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
         } catch (err) {
             console.error('Modal: Error', err);
             setError('Network error. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    return (
+    // Use Portal to render at document.body level
+    return ReactDOM.createPortal(
         <div className="modal-overlay">
             <div className="create-project-modal">
                 <div className="modal-header">
@@ -173,12 +201,15 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                     </div>
 
                     <div className="modal-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="btn-primary">Create Project</button>
+                        <button type="button" className="btn-secondary" onClick={onClose} disabled={isLoading}>Cancel</button>
+                        <button type="submit" className="btn-primary" disabled={isLoading}>
+                            {isLoading ? 'Creating...' : 'Create Project'}
+                        </button>
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body // Target container
     );
 };
 

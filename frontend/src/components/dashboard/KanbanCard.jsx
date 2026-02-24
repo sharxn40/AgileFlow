@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { MdAttachFile, MdChatBubbleOutline, MdDelete } from 'react-icons/md';
+import { MdAttachFile, MdChatBubbleOutline, MdDelete, MdAccessTime } from 'react-icons/md';
 import './KanbanCard.css';
+import { getDeadlineStatus, formatCountdown, getStatusColor } from '../../utils/deadlineUtils';
 
 const KanbanCard = ({ task, index, onMove, onStatusChange, availableStatuses, showLeft, showRight, isDragDisabled, onDelete }) => {
     // task is now an Issue object: { id, issueId, title, priority, assignee, etc. }
@@ -20,8 +21,14 @@ const KanbanCard = ({ task, index, onMove, onStatusChange, availableStatuses, sh
         return 'tag-blue';
     };
 
+    // Deadline Logic
+    const deadlineStatus = task.dueDate ? getDeadlineStatus(task.dueDate) : 'none';
+
+    const deadlineColor = getStatusColor(deadlineStatus);
+    const deadlineText = formatCountdown(task.dueDate);
+
     return (
-        <div className="kanban-card">
+        <div className="kanban-card" style={{ borderLeft: deadlineStatus === 'critical' || deadlineStatus === 'overdue' ? `4px solid ${deadlineColor}` : '' }}>
             <div className="card-header">
                 <span className="task-id">{task.issueId || task.id}</span>
                 {onDelete && (
@@ -47,6 +54,13 @@ const KanbanCard = ({ task, index, onMove, onStatusChange, availableStatuses, sh
 
             <div className="card-tags">
                 {task.type && <span className={`tag-badge ${getTagClass(task.type)}`}>{task.type}</span>}
+                {/* Deadline Badge */}
+                {deadlineStatus !== 'safe' && deadlineStatus !== 'none' && task.status !== 'Done' && (
+                    <span className="tag-badge" style={{ backgroundColor: deadlineColor, color: 'white', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <MdAttachFile style={{ display: 'none' }} /> {deadlineText}
+                    </span>
+                )}
+
                 {/* Status Dropdown */}
                 {onStatusChange && availableStatuses && (
                     <select

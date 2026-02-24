@@ -12,6 +12,14 @@ exports.createProject = async (req, res) => {
         // Default leadId to the creator if not specified
         const finalLeadId = leadId || req.user.id;
 
+        // Check for duplicate project name (case-insensitive)
+        const allProjects = await Project.findAll();
+        const nameExists = allProjects.some(p => p.name.toLowerCase() === name.trim().toLowerCase());
+
+        if (nameExists) {
+            return res.status(400).json({ message: 'Project name already exists' });
+        }
+
         // Ensure unique key
         let finalKey = key.toUpperCase();
         let counter = 1;
@@ -80,14 +88,14 @@ exports.getProjectBoard = async (req, res) => {
         const activeSprint = sprints[0] || null;
 
         let issues = [];
-        if (activeSprint) {
-            issues = await Issue.findAll({ where: { sprintId: activeSprint.id } });
-        } else {
-            // Fallback: If no active sprint (Kanban mode), fetch all project issues 
-            // excluding those creating in Backlog if we differentiate status
-            // For now, fetch ALL to ensure visibility for the user
-            issues = await Issue.findAll({ where: { projectId } });
-        }
+        // REMOVED duplicate 'let issues = [];'
+
+        // ALWAYS fetch all project issues for now to ensure visibility (Kanban style fallback)
+        // This fixes the issue where tasks created in Dashboard (without sprintId) don't show up on Board if a Sprint is active.
+        issues = await Issue.findAll({ where: { projectId } });
+
+        // If we strictly wanted Scrum:
+        // if (activeSprint) issues = issues.filter(i => i.sprintId === activeSprint.id);
 
         res.json({
             project,
