@@ -7,6 +7,7 @@ router.post('/', protect, projectController.createProject);
 router.get('/', protect, projectController.getAllProjects);
 router.get('/:projectId/board', protect, projectController.getProjectBoard);
 router.get('/:projectId/backlog', protect, projectController.getProjectBacklog);
+router.delete('/:projectId', protect, projectController.deleteProject);
 
 const analyticsController = require('../controllers/analyticsController');
 router.get('/:projectId/activity', protect, analyticsController.getRecentActivity);

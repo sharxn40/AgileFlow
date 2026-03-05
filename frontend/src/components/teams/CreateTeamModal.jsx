@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaUsers } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const CreateTeamModal = ({ onClose, onCreated }) => {
     const [name, setName] = useState('');
@@ -8,7 +9,7 @@ const CreateTeamModal = ({ onClose, onCreated }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const token = localStorage.getItem('token');
+    const { authFetch } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,9 +18,8 @@ const CreateTeamModal = ({ onClose, onCreated }) => {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch('http://localhost:3000/api/teams', {
+            const res = await authFetch('http://localhost:3000/api/teams', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ name: name.trim(), description }),
             });
             const data = await res.json();

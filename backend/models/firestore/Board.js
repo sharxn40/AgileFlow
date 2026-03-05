@@ -36,12 +36,29 @@ class Board {
         return { id: doc.id, ...doc.data() };
     }
 
+    static async findAll(query = {}) {
+        let localQuery = Board.collection;
+        if (query.where) {
+            for (const [key, value] of Object.entries(query.where)) {
+                localQuery = localQuery.where(key, '==', value);
+            }
+        }
+        const snapshot = await localQuery.get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+
     static async update(id, updates) {
         await Board.collection.doc(id).update({
             ...updates,
             updatedAt: new Date().toISOString()
         });
         return { id, ...updates };
+    }
+
+    static async delete(id) {
+        if (!id) return false;
+        await Board.collection.doc(id).delete();
+        return true;
     }
 }
 

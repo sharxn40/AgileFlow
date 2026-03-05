@@ -53,7 +53,6 @@ exports.createIssue = async (req, res) => {
                 reporterId: reporterId || req.user.id,
                 assigneeId: resolvedAssigneeId,
                 sprintId: req.body.sprintId || null,
-                storyPoints: req.body.storyPoints || 0,
                 description: req.body.description || '',
                 createdAt: now,
                 updatedAt: now,
@@ -170,7 +169,10 @@ exports.getMyIssues = async (req, res) => {
         // 2. Fetch all issues for these projects (Inefficient for huge DBs, but fine for prototype)
         // Ideally: Issue.findAll({ where: { projectId: { in: myProjectIds } } })
         const allIssues = await Issue.findAll();
-        const issues = allIssues.filter(issue => myProjectIds.map(String).includes(String(issue.projectId)));
+        const issues = allIssues.filter(issue =>
+            myProjectIds.map(String).includes(String(issue.projectId)) ||
+            (issue.type === 'Meeting' && String(issue.assigneeId) === String(userId))
+        );
 
         console.log(`[getMyIssues] Returning ${issues.length} issues (Total in DB: ${allIssues.length})`);
 
@@ -185,7 +187,21 @@ exports.getIssueDetails = async (req, res) => {
         const { id } = req.params;
         const issue = await Issue.findByPk(id);
         if (!issue) return res.status(404).json({ message: 'Issue not found' });
-        res.json(issue);
+
+        // Resolve Assignee Username
+        let assigneeDisplay = issue.assigneeId;
+        if (issue.assigneeId) {
+            try {
+                const user = await User.findByPk(issue.assigneeId);
+                if (user) {
+                    assigneeDisplay = user.username;
+                }
+            } catch (err) {
+                console.warn(`[getIssueDetails] Failed to resolve assignee ID ${issue.assigneeId}`);
+            }
+        }
+
+        res.json({ ...issue, assigneeDisplay });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching issue', error: error.message });
     }

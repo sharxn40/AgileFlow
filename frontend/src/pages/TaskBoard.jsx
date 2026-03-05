@@ -163,7 +163,7 @@ const TaskBoard = () => {
         if (!sourceColId || !task) return;
 
         // Find destination column by name (status)
-        const destColEntry = Object.entries(columns).find(([_, col]) => col.name === newStatus);
+        const destColEntry = Object.entries(columns).find(([colId, col]) => col.name === newStatus);
         if (!destColEntry) return; // Status doesn't exist as a column
         const [destColId, destCol] = destColEntry;
 

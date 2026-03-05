@@ -1,23 +1,32 @@
-/* Sidebar Floating Dock Styles - EXPANDED */
+/* Sidebar Floating Dock Styles - "Incial" Dark Theme */
 .app-sidebar {
-    width: 250px;
+    width: 260px;
     height: calc(100vh - 32px);
     margin: 16px 0 16px 16px;
-    background-color: #FFFFFF;
+    background-color: #0b0f19;
+    /* Deep dark navy */
     border-radius: 24px;
     display: flex;
     flex-direction: column;
     padding: 24px 0;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     align-items: flex-start;
-    /* Align left */
+    color: #e0e4eb;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.app-sidebar.collapsed {
+    width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
 }
 
 /* Header */
 .sidebar-header {
-    height: 48px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -28,16 +37,31 @@
 }
 
 .logo-image {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
+    background: white;
+    /* Contrast for black logo */
+    border-radius: 50%;
+    padding: 4px;
 }
 
 .sidebar-header h2 {
     display: block;
-    font-size: 1.2rem;
-    color: #172B4D;
+    font-size: 1.3rem;
+    color: #FFFFFF;
+    font-weight: 700;
     margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.sidebar-header-subtitle {
+    font-size: 0.6rem;
+    color: #727da1;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 2px;
 }
 
 /* Nav Section */
@@ -52,16 +76,38 @@
     /* Tighter gap */
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    /* Firefox */
+}
+
+/* Webkit Custom Scrollbar for Sidebar Nav */
+.sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .nav-section-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    color: #6B778C;
-    margin: 24px 0 8px 12px;
-    /* Indent slightly */
-    letter-spacing: 0.05em;
+    color: #4a5578;
+    margin: 16px 0 8px 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 /* Nav Items */
@@ -70,32 +116,63 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    height: 40px;
-    /* Slimmer */
-    border-radius: 8px;
-    color: #42526E;
+    height: 44px;
+    border-radius: 12px;
+    color: #727da1;
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
     background: transparent;
-    border: none;
-    padding: 0 12px;
-    margin: 0;
+    border: 1px solid transparent;
+    padding: 0 16px;
+    margin: 2px 0;
+    position: relative;
 }
 
 .nav-item:hover {
-    background-color: #F4F5F7;
-    color: #172B4D;
-    transform: none;
-    /* Remove bounce */
+    color: #e0e4eb;
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
 .nav-item.active {
-    background-color: #E6F0FF;
-    /* Lighter blue background */
-    color: #0052CC;
-    /* Blue text */
-    box-shadow: none;
+    background-color: #1b2138;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.create-team-btn-sidebar {
+    background: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    color: #5d5fef;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px;
+    margin: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.create-team-btn-sidebar:hover {
+    background: rgba(93, 95, 239, 0.1);
+    border-color: rgba(93, 95, 239, 0.5);
+    color: #7a7cff;
+}
+
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: #5d5fef;
+    /* Purple accent dot */
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(93, 95, 239, 0.6);
 }
 
 .nav-icon {
@@ -175,9 +252,9 @@
 .sub-item {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: #6B778C;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #727da1;
     text-decoration: none;
     font-size: 0.85rem;
     font-weight: 500;
@@ -185,13 +262,13 @@
 }
 
 .sub-item:hover {
-    background: #F4F5F7;
-    color: #172B4D;
+    background: rgba(255, 255, 255, 0.03);
+    color: #e0e4eb;
 }
 
 .sub-item.active {
-    color: #0052CC;
-    background: #E6F0FF;
+    color: #FFFFFF;
+    background: #1b2138;
 }
 
 .sub-icon {
@@ -201,20 +278,83 @@
     align-items: center;
 }
 
-/* Footer */
+/* Footer & Profile Card */
 .sidebar-footer {
-    padding: 24px 0;
+    padding: 0 16px 20px;
     width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
     border-top: none;
 }
 
-.logout-btn {
-    color: #DE350B;
+.sidebar-profile-card {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #14192b;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 12px;
 }
 
-.logout-btn:hover {
-    background-color: #FFEBE6;
-    color: #DE350B;
+.profile-card-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #2a3455;
+}
+
+.profile-card-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.profile-card-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.profile-card-role {
+    font-size: 0.6rem;
+    color: #5d5fef;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.logout-btn-container {
+    width: 100%;
+}
+
+.terminate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #ff5b5b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 8px;
+}
+
+.terminate-btn:hover {
+    background: rgba(255, 91, 91, 0.1);
+}
+
+.terminate-btn svg {
+    font-size: 1.1rem;
 }

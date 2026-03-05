@@ -21,7 +21,7 @@ const COLORS = [
     { name: 'Cyan', value: '#06b6d4' }
 ];
 
-const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
+const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
     if (!isOpen) return null;
 
     const [formData, setFormData] = useState({
@@ -63,7 +63,10 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
         }
 
         // Validate Date (Future only if set)
-        if (formData.dueDate) {
+        if (!formData.dueDate) {
+            setError('Due Date is required for scheduling.');
+            return;
+        } else {
             const selectedDate = new Date(formData.dueDate);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -93,7 +96,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
 
             if (res.ok) {
                 const project = await res.json();
-                onCreate(project);
+                if (onProjectCreated) onProjectCreated(project);
                 onClose();
             } else {
                 const errData = await res.json();
@@ -120,7 +123,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                     {error && <div style={{ background: '#FFEBE6', color: '#BF2600', padding: '10px', borderRadius: '4px', fontSize: '0.9rem' }}>{error}</div>}
                     <div className="form-row">
                         <div className="form-group" style={{ flex: 2 }}>
-                            <label>Project Name</label>
+                            <label>Project Name <span style={{ color: '#e53e3e' }}>*</span></label>
                             <input
                                 type="text"
                                 name="name"
@@ -138,7 +141,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                             />
                         </div>
                         <div className="form-group" style={{ flex: 1 }}>
-                            <label>Key</label>
+                            <label>Key <span style={{ color: '#e53e3e' }}>*</span></label>
                             <input
                                 type="text"
                                 name="key"
@@ -154,13 +157,13 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Project Type</label>
-                            <select name="type" className="form-select" value={formData.type} onChange={handleChange}>
+                            <label>Project Type <span style={{ color: '#e53e3e' }}>*</span></label>
+                            <select name="type" className="form-select" value={formData.type} onChange={handleChange} required>
                                 {PROJECT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                         </div>
                         <div className="form-group">
-                            <label>Due Date</label>
+                            <label>Due Date <span style={{ color: '#e53e3e' }}>*</span></label>
                             <input
                                 type="date"
                                 name="dueDate"
@@ -172,7 +175,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                     </div>
 
                     <div className="form-group">
-                        <label>Theme Color</label>
+                        <label>Theme Color <span style={{ color: '#e53e3e' }}>*</span></label>
                         <div className="color-picker">
                             {COLORS.map(c => (
                                 <div

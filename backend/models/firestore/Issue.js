@@ -19,7 +19,6 @@ class Issue {
             status: cleanData.status || 'To Do',
             type: cleanData.type || 'Task', // Story, Bug, Task
             priority: cleanData.priority || 'Medium',
-            storyPoints: cleanData.storyPoints || 0,
             reporterId: cleanData.reporterId, // Who created it
             assigneeId: cleanData.assigneeId || null,
             projectId: cleanData.projectId,
@@ -83,6 +82,12 @@ class Issue {
             return 1;
         }
         return 0;
+    }
+
+    static async delete(id) {
+        if (!id) return false;
+        await Issue.collection.doc(id).delete();
+        return true;
     }
 }
 

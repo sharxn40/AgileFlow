@@ -64,24 +64,17 @@ exports.googleLogin = async (req, res) => {
     const { token, userInfo } = req.body;
 
     try {
-        let email, name, googleId, photoURL;
+        console.log("DEBUG: Starting googleLogin");
 
-        if (userInfo && userInfo.email) {
-            // New flow: frontend sends pre-verified userInfo from Google's /userinfo endpoint
-            email = userInfo.email;
-            name = userInfo.name || email.split('@')[0];
-            googleId = userInfo.sub;
-            photoURL = userInfo.picture;
-            console.log("DEBUG: Using userInfo payload for", email);
-        } else {
-            // Legacy flow: try to verify as Firebase ID token
-            const decodedToken = await admin.auth().verifyIdToken(token);
-            email = decodedToken.email;
-            name = decodedToken.name || email.split('@')[0];
-            googleId = decodedToken.uid;
-            photoURL = decodedToken.picture;
-            console.log("DEBUG: verifyIdToken succeeded for", email);
+        if (!userInfo || !userInfo.email) {
+            return res.status(400).json({ message: 'Missing user info from Google Login payload' });
         }
+
+        const email = userInfo.email;
+        const name = userInfo.name || email.split('@')[0];
+        const googleId = userInfo.sub;
+        const photoURL = userInfo.picture;
+        console.log("DEBUG: Using userInfo payload for", email);
 
         // Login or Create User (Firestore)
         console.log("DEBUG: Querying User.findOne for", email);
@@ -112,13 +105,19 @@ exports.googleLogin = async (req, res) => {
             },
             token: generateToken(user.id)
         });
+        console.log("DEBUG: Finished googleLogin successfully");
 
     } catch (error) {
-        console.error("Google Auth Verification Error:", error);
+        console.error("Google Auth Verification Error:", error.message, error.code);
         try {
             const fs = require('fs');
             fs.writeFileSync('auth_error.log', `Error: ${error.message}\nStack: ${error.stack}\nToken: ${token ? token.substring(0, 20) + '...' : 'None'}`);
         } catch (filesErr) { console.error('Failed to write log', filesErr); }
+
+        // Differentiate between generic auth errors and database connection failures
+        if (error.code === 16 || error.message.includes('UNAUTHENTICATED') || error.message.includes('Firestore')) {
+            return res.status(500).json({ message: 'Database connection error during login', details: error.message });
+        }
 
         res.status(401).json({ message: 'Google Auth Failed', details: error.message });
     }

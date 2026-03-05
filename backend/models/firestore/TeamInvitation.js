@@ -11,6 +11,8 @@ class TeamInvitation {
             teamId: inviteData.teamId,
             inviteeEmail: inviteData.inviteeEmail.toLowerCase().trim(),
             token,
+            jobDescription: inviteData.jobDescription || '',
+            paymentAmount: inviteData.paymentAmount || 0,
             status: 'pending', // pending | accepted | declined
             createdAt: now,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days

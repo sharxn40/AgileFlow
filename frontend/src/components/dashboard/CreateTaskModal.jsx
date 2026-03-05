@@ -15,12 +15,11 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
 
     const [formData, setFormData] = useState({
         title: '',
-        tag: '',
+        type: '',
         priority: 'Medium',
         assignee: initialAssignee,
         projectId: projects.length > 0 ? projects[0].id : '',
         dueDate: initialDate ? initialDate.toISOString().split('T')[0] : '',
-        storyPoints: 0,
         paymentAmount: 0
     });
 
@@ -69,12 +68,11 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
 
         setFormData({
             title: '',
-            tag: '',
+            type: '',
             priority: 'Medium',
             assignee: '',
             projectId: projects.length > 0 ? projects[0].id : '',
             dueDate: '',
-            storyPoints: 0,
             paymentAmount: 0
         });
     };
@@ -98,7 +96,9 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
                                 className="form-input"
                                 value={formData.projectId}
                                 onChange={handleChange}
+                                required
                             >
+                                <option value="" disabled>Select a project</option>
                                 {projects.map(p => (
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
@@ -124,10 +124,11 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
                             <label>Type / Tag</label>
                             <input
                                 type="text"
-                                name="tag"
+                                name="type"
                                 className="form-input"
-                                value={formData.tag}
+                                value={formData.type}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
@@ -139,6 +140,7 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
                                 value={formData.assignee}
                                 onChange={handleChange}
                                 placeholder="Assignee Email (e.g. user@test.com)"
+                                required
                             />
                         </div>
                     </div>
@@ -151,33 +153,22 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, projects = [], initialDate
                             className="form-input"
                             value={formData.dueDate}
                             onChange={handleChange}
+                            required
                         />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Story Points</label>
-                            <input
-                                type="number"
-                                name="storyPoints"
-                                className="form-input"
-                                value={formData.storyPoints}
-                                onChange={handleChange}
-                                min="0"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Payment Amount ($)</label>
-                            <input
-                                type="number"
-                                name="paymentAmount"
-                                className="form-input"
-                                value={formData.paymentAmount}
-                                onChange={handleChange}
-                                min="0"
-                                placeholder="0.00"
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label>Payment Amount ($)</label>
+                        <input
+                            type="number"
+                            name="paymentAmount"
+                            className="form-input"
+                            value={formData.paymentAmount}
+                            onChange={handleChange}
+                            min="0"
+                            placeholder="0.00"
+                            required
+                        />
                     </div>
 
                     <div className="form-group">

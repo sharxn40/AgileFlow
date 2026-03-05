@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { MdSearch, MdNotificationsNone, MdHelpOutline, MdExpandMore, MdMenu } from 'react-icons/md';
+import { MdSearch, MdExpandMore, MdMenu, MdCalendarToday, MdAdd } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import NotificationBell from './NotificationBell';
+import CreateProjectModal from './dashboard/CreateProjectModal';
 import './TopNav.css';
 
 const TopNav = ({
@@ -13,12 +15,23 @@ const TopNav = ({
     onOpenProfile
 }) => {
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleDropdown = (name) => {
         if (activeDropdown === name) {
             setActiveDropdown(null);
         } else {
             setActiveDropdown(name);
+        }
+    };
+
+    const handleCreateProject = (newProject) => {
+        setIsDeployModalOpen(false);
+        // Dispatch event so Sidebar can refresh projects list if needed
+        window.dispatchEvent(new Event('projectCreated'));
+        if (newProject && newProject.id) {
+            navigate(`/project/${newProject.id}/board`);
         }
     };
 
@@ -31,13 +44,13 @@ const TopNav = ({
     return (
         <header className="app-topnav">
             <div className="topnav-center-nav">
-                <h2 className="current-view-title">
-                    {currentView === 'overview' && 'Dashboard Overview'}
-                    {currentView === 'board' && 'Kanban Board'}
-                    {currentView === 'analytics' && 'Analytics & Reports'}
-                    {currentView === 'backlog' && 'Sprint Backlog'}
-                    {currentView === 'calendar' && 'Calendar'}
-                </h2>
+                <div className="topnav-breadcrumb">
+                    <MdMenu
+                        style={{ marginRight: '16px', fontSize: '1.4rem', cursor: 'pointer', color: '#172B4D' }}
+                        onClick={onToggleSidebar}
+                    />
+                    OPERATIONAL INTEL
+                </div>
             </div>
 
             <div className="topnav-search-wrapper">
@@ -45,28 +58,21 @@ const TopNav = ({
                 <input
                     type="text"
                     className="topnav-search-input"
-                    placeholder="Search tasks, projects, people..."
+                    placeholder="Deep Search... (⌘K)"
                     value={searchTerm}
                     onChange={(e) => onSearchChange(e.target.value)}
                 />
             </div>
 
             <div className="topnav-actions">
-                <div className="action-wrapper">
-                    <button
-                        className={`icon-btn ${activeDropdown === 'help' ? 'active' : ''}`}
-                        title="Help"
-                        onClick={() => toggleDropdown('help')}
-                    >
-                        <MdHelpOutline />
+                <button className="deploy-btn" title="Create New Project" onClick={() => setIsDeployModalOpen(true)}>
+                    <MdAdd style={{ fontSize: '1.2rem' }} /> DEPLOY
+                </button>
+
+                <div className="action-wrapper" style={{ marginLeft: '8px' }}>
+                    <button className="icon-btn" title="Calendar">
+                        <MdCalendarToday />
                     </button>
-                    {activeDropdown === 'help' && (
-                        <div className="dropdown-menu help-menu">
-                            {helpLinks.map((link, i) => (
-                                <a key={i} href={link.url} className="dropdown-item">{link.label}</a>
-                            ))}
-                        </div>
-                    )}
                 </div>
 
                 <div className="action-wrapper">
@@ -77,16 +83,24 @@ const TopNav = ({
 
                 <div className="user-profile-trigger" onClick={onOpenProfile}>
                     <div className="user-avatar-small">
-                        {user.picture ? (
-                            <img src={user.picture} alt="profile" />
-                        ) : (
-                            <span>{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</span>
-                        )}
+                        <img
+                            src={user.picture || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.username || 'U') + '&background=2a3455&color=fff'}
+                            alt="profile"
+                        />
                     </div>
-                    <span className="user-name">{user.username}</span>
+                    <div className="user-info-stack">
+                        <span className="user-name">{user.username}</span>
+                        <span className="user-role-mini">{user.role === 'admin' ? 'SUPER_ADMIN' : 'USER'}</span>
+                    </div>
                     <MdExpandMore className="dropdown-icon" />
                 </div>
             </div>
+
+            <CreateProjectModal
+                isOpen={isDeployModalOpen}
+                onClose={() => setIsDeployModalOpen(false)}
+                onCreate={handleCreateProject}
+            />
         </header >
     );
 };

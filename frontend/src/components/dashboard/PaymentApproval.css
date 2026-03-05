@@ -1,29 +1,41 @@
 .payment-approval-container {
-    padding: 20px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    margin-top: 20px;
+    padding: 24px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-top: 24px;
 }
 
 .payment-task-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 10px;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.payment-task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .task-info h4 {
-    margin: 0 0 5px 0;
-    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    color: #1a202c;
+    font-size: 1.05rem;
 }
 
 .task-info .assignee {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: #718096;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .payment-actions {
@@ -33,12 +45,14 @@
 }
 
 .payment-actions .amount {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: var(--accent-green);
+    color: #059669;
 }
 
 .no-tasks {
-    color: var(--text-secondary);
+    color: #a0aec0;
     font-style: italic;
+    text-align: center;
+    padding: 20px 0;
 }

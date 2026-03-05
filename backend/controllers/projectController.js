@@ -124,3 +124,50 @@ exports.getProjectBacklog = async (req, res) => {
         res.status(500).json({ message: 'Error fetching backlog', error: error.message });
     }
 };
+
+exports.deleteProject = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Project.findByPk(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Must be the Project Admin (Lead) or System Admin to delete
+        const userId = req.user.id || req.user._id;
+        if (String(project.leadId) !== String(userId) && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'You are not authorized to delete this project.' });
+        }
+
+        // 1. Delete all associated issues
+        const issues = await Issue.findAll({ where: { projectId } });
+        for (const issue of issues) {
+            await Issue.delete(issue.id);
+        }
+
+        // 2. Delete all associated sprints
+        const sprints = await Sprint.findAll({ where: { projectId } });
+        for (const sprint of sprints) {
+            await Sprint.delete(sprint.id);
+        }
+
+        // 3. Delete all associated boards
+        const boards = await Board.findAll({ where: { projectId: project.id } }); // Note: Using direct query syntax as Boards use projectId directly
+        const allBoards = await Board.findAll();
+        const projectBoards = allBoards.filter(b => b.projectId === projectId);
+        for (const board of projectBoards) {
+            await Board.delete(board.id);
+        }
+
+        // 4. Finally, delete the project document itself
+        await Project.delete(projectId);
+
+        console.log(`[DELETE] Project ${project.name} (${projectId}) wiped by user ${req.user.id}`);
+        res.status(200).json({ message: 'Project and all associated data deleted successfully.' });
+
+    } catch (error) {
+        console.error('DELETE PROJECT ERROR:', error);
+        res.status(500).json({ message: 'Error deleting project', error: error.message });
+    }
+};

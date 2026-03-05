@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Outlet, Link, useLocation } from 'react-router-dom';
 import './ProjectDashboard.css';
-import InviteMemberModal from '../components/project/InviteMemberModal';
-import { FaUserPlus } from 'react-icons/fa';
 
 const ProjectDashboard = () => {
     const { projectId } = useParams();
     const location = useLocation();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     useEffect(() => {
         // Fetch project details
@@ -39,8 +36,39 @@ const ProjectDashboard = () => {
 
     return (
         <div className="project-dashboard">
+            <div className="project-dashboard-header">
+                <div className="project-header-info">
+                    <div className="p-avatar">{project.key ? project.key.substring(0, 1) : 'P'}</div>
+                    <div>
+                        <h1>{project.name}</h1>
+                        <span className="p-key-badge">{project.key}</span>
+                    </div>
+                </div>
+
+                <nav className="project-tabs">
+                    <Link
+                        to={`/project/${projectId}/board`}
+                        className={`project-tab ${location.pathname.includes('/board') ? 'active' : ''}`}
+                    >
+                        Board
+                    </Link>
+                    <Link
+                        to={`/project/${projectId}/backlog`}
+                        className={`project-tab ${location.pathname.includes('/backlog') ? 'active' : ''}`}
+                    >
+                        Backlog
+                    </Link>
+                    <Link
+                        to={`/project/${projectId}/settings`}
+                        className={`project-tab ${location.pathname.includes('/settings') ? 'active' : ''}`}
+                    >
+                        Settings
+                    </Link>
+                </nav>
+            </div>
+
             <div className="project-content">
-                <Outlet context={{ project }} />
+                <Outlet context={{ project, searchTerm: '' }} />
             </div>
         </div>
     );

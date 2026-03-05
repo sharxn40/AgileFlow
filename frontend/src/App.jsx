@@ -17,7 +17,7 @@ import ProjectDashboard from './pages/ProjectDashboard';
 import CalendarView from './pages/CalendarView';
 import BacklogView from './components/BacklogView';
 import PrivateRoute from './components/PrivateRoute';
-import MyEarnings from './pages/MyEarnings';
+import Vault from './pages/Vault';
 import ProjectBudgetConfig from './components/dashboard/ProjectBudgetConfig';
 import TeamsPage from './pages/TeamsPage';
 import AcceptTeamInvite from './pages/AcceptTeamInvite';
@@ -47,7 +47,7 @@ function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="calendar" element={<CalendarView />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="earnings" element={<MyEarnings />} />
+            <Route path="vault" element={<Vault />} />
             <Route path="teams" element={<TeamsPage />} />
           </Route>
 

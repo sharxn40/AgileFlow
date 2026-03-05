@@ -61,6 +61,12 @@ class Project {
         });
         return { id, ...updates };
     }
+
+    static async delete(id) {
+        if (!id) return false;
+        await Project.collection.doc(id).delete();
+        return true;
+    }
 }
 
 module.exports = Project;

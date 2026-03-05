@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaEnvelope, FaLink, FaCopy } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
+    const { authFetch } = useAuth();
     const [email, setEmail] = useState('');
+    const [jobDescription, setJobDescription] = useState('');
+    const [paymentAmount, setPaymentAmount] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(null);
     const [inviteLink, setInviteLink] = useState('');
     const [copied, setCopied] = useState(false);
-
-    const token = localStorage.getItem('token');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,10 +22,9 @@ const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
         setError('');
         setSuccess(null);
         try {
-            const res = await fetch(`http://localhost:3000/api/teams/${team.id}/invite`, {
+            const res = await authFetch(`http://localhost:3000/api/teams/${team.id}/invite`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ email: email.trim() }),
+                body: JSON.stringify({ email: email.trim(), jobDescription, paymentAmount: Number(paymentAmount) || 0 }),
             });
             const data = await res.json();
             if (res.ok) {
@@ -51,7 +52,7 @@ const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="create-project-modal" style={{ maxWidth: '460px' }} onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2><FaEnvelope style={{ marginRight: '10px', color: 'var(--theme-primary)' }} />Invite to {team.name}</h2>
+                    <h2><FaEnvelope style={{ marginRight: '10px', color: 'var(--theme-primary)' }} />Invite to {team.name} (Job Offer)</h2>
                     <button className="close-btn" onClick={onClose}><FaTimes /></button>
                 </div>
                 <div className="modal-body">
@@ -81,9 +82,34 @@ const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
                                     style={{ flex: 1 }}
                                 />
                                 <button type="submit" className="btn-primary" disabled={loading} style={{ whiteSpace: 'nowrap' }}>
-                                    {loading ? 'Sending...' : 'Send Invite'}
+                                    {loading ? 'Sending...' : 'Send Job Offer'}
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: '16px' }}>
+                            <label>Job Description</label>
+                            <textarea
+                                className="form-input"
+                                placeholder="Describe what the seeker needs to accomplish..."
+                                value={jobDescription}
+                                onChange={e => setJobDescription(e.target.value)}
+                                rows="3"
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: '16px' }}>
+                            <label>Payment Amount (₹)</label>
+                            <input
+                                type="number"
+                                className="form-input"
+                                placeholder="e.g. 50000"
+                                value={paymentAmount}
+                                onChange={e => setPaymentAmount(e.target.value)}
+                                min="0"
+                                required
+                            />
                         </div>
                     </form>
 

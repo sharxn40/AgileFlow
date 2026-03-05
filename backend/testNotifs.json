@@ -1,0 +1,62 @@
+[
+  {
+    "userId": "kqNkjF1Tgu4810LeFfa6",
+    "type": "invitation",
+    "message": "You have been invited to join project: Mini Project",
+    "metadata": {
+      "projectId": "RT2wbovHio5GMcX5A9yG",
+      "token": "3b072dd97c23f8f7bdad9a5ffd8d1f041b10ae09",
+      "inviteUrl": "http://localhost:5173/accept-invite/3b072dd97c23f8f7bdad9a5ffd8d1f041b10ae09"
+    },
+    "createdAt": "2026-02-01T16:11:43.037Z",
+    "isRead": true
+  },
+  {
+    "userId": "Xr98CopUI614TpTS9tPg",
+    "type": "invitation",
+    "message": "You have been invited to join project: Marketig Plan",
+    "metadata": {
+      "projectId": "hal12vW5wrQhYGuRYYy2",
+      "token": "cb38224614cd34b0d0539f357a227456158c1cb1",
+      "inviteUrl": "http://localhost:5173/accept-invite/cb38224614cd34b0d0539f357a227456158c1cb1"
+    },
+    "createdAt": "2026-01-29T08:29:19.023Z",
+    "isRead": true
+  },
+  {
+    "userId": "Xr98CopUI614TpTS9tPg",
+    "type": "invitation",
+    "message": "You have been invited to join project: Marketig Plan",
+    "metadata": {
+      "projectId": "hal12vW5wrQhYGuRYYy2",
+      "token": "da8f919a171a03f786dcf4fa9df47ad44cd5865b",
+      "inviteUrl": "http://localhost:5173/accept-invite/da8f919a171a03f786dcf4fa9df47ad44cd5865b"
+    },
+    "createdAt": "2026-01-29T08:24:49.191Z",
+    "isRead": true
+  },
+  {
+    "userId": "Xr98CopUI614TpTS9tPg",
+    "type": "invitation",
+    "message": "You have been invited to join project: Saas",
+    "metadata": {
+      "projectId": "naTO8ygv5Kmfk0C8sRei",
+      "token": "a57251cb1ad5208a0abaee42e66bd90ff2efdf1c",
+      "inviteUrl": "http://localhost:5173/accept-invite/a57251cb1ad5208a0abaee42e66bd90ff2efdf1c"
+    },
+    "createdAt": "2026-01-29T08:22:52.961Z",
+    "isRead": true
+  },
+  {
+    "userId": "Xr98CopUI614TpTS9tPg",
+    "type": "invitation",
+    "message": "You have been invited to join project: Saas",
+    "metadata": {
+      "projectId": "naTO8ygv5Kmfk0C8sRei",
+      "token": "dc60b680870fa54c4c5dae2a59678e4dda5fb685",
+      "inviteUrl": "http://localhost:5173/accept-invite/dc60b680870fa54c4c5dae2a59678e4dda5fb685"
+    },
+    "createdAt": "2026-01-29T08:10:38.365Z",
+    "isRead": true
+  }
+]

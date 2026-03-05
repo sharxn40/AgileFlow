@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useOutletContext } from 'react-router-dom';
 import { FaTasks, FaCheckCircle, FaExclamationCircle, FaRegClock, FaProjectDiagram, FaPlus, FaCalendarAlt, FaUserPlus } from 'react-icons/fa';
+import { MdArrowForward, MdVideocam, MdAdjust, MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import StatCard from '../components/dashboard/StatCard';
 import CreateProjectModal from '../components/dashboard/CreateProjectModal';
 import DashboardFilters from '../components/dashboard/DashboardFilters';
@@ -12,7 +13,7 @@ import InlineStatusDropdown from '../components/dashboard/InlineStatusDropdown';
 import InviteMemberModal from '../components/project/InviteMemberModal';
 import PersonalKanban from '../components/dashboard/PersonalKanban';
 import Analytics from './Analytics'; // Import Analytics
-import BacklogView from '../components/BacklogView'; // Import BacklogView
+
 import TimelineView from '../components/dashboard/TimelineView';
 import MyEarnings from './MyEarnings';
 
@@ -38,6 +39,9 @@ const Dashboard = () => {
     const [selectedBoardProject, setSelectedBoardProject] = useState('');
 
     const { currentView } = useOutletContext(); // Provided by Layout
+
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [calendarMonth, setCalendarMonth] = useState(new Date());
 
     const [user] = useState(() => {
         try {
@@ -97,9 +101,22 @@ const Dashboard = () => {
         setFilteredIssues(result);
     }, [filters, myIssues]);
 
-    const handleIssueClick = (issue) => {
-        setSelectedIssue(issue);
+    const handleIssueClick = async (issue) => {
         setIsDrawerOpen(true);
+        setSelectedIssue(issue); // Set immediately for fast UI response
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:3000/api/issues/${issue.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const fullIssue = await res.json();
+                setSelectedIssue(fullIssue); // Override with full details (including resolved assignee)
+            }
+        } catch (error) {
+            console.error("Failed to fetch full issue details:", error);
+        }
     };
 
     const handleIssueUpdate = async (updatedIssue) => {
@@ -178,79 +195,268 @@ const Dashboard = () => {
     const weeklyTrend = weeklyDiff >= 0 ? `+${weeklyDiff}` : `${weeklyDiff}`;
     const pendingCount = myIssues.length - doneIssues.length;
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good Morning';
+        if (hour < 17) return 'Good Afternoon';
+        return 'Good Evening';
+    };
+
+    // Calculate Agenda and Current Focus based on real issues
+    const upcomingIssues = filteredIssues
+        .filter(i => i.status !== 'Done')
+        .sort((a, b) => {
+            const dateA = a.dueDate ? new Date(a.dueDate).getTime() : new Date(a.createdAt).getTime();
+            const dateB = b.dueDate ? new Date(b.dueDate).getTime() : new Date(b.createdAt).getTime();
+            return dateA - dateB;
+        });
+
+    const currentFocusIssue = upcomingIssues.length > 0 ? upcomingIssues[0] : null;
+
+    const selectedDateStr = selectedDate.toDateString();
+    const agendaIssues = filteredIssues.filter(i => {
+        const issueDate = i.dueDate ? new Date(i.dueDate) : new Date(i.createdAt || Date.now());
+        return issueDate.toDateString() === selectedDateStr;
+    }).sort((a, b) => {
+        const dateA = a.dueDate ? new Date(a.dueDate).getTime() : new Date(a.createdAt).getTime();
+        const dateB = b.dueDate ? new Date(b.dueDate).getTime() : new Date(b.createdAt).getTime();
+        return dateA - dateB;
+    });
+
+    const renderCalendarDays = () => {
+        const days = [];
+        const labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        labels.forEach(l => days.push(<div key={`label-${l}`} className="mini-calendar-day-label">{l}</div>));
+
+        const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+        const firstDayOfMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1).getDay();
+
+        for (let i = 0; i < firstDayOfMonth; i++) {
+            days.push(<div key={`empty-${i}`}></div>);
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), i).toDateString();
+            const isSelected = selectedDate.toDateString() === dateStr;
+            const isToday = new Date().toDateString() === dateStr;
+            days.push(
+                <div
+                    key={`day-${i}`}
+                    className={`mini-calendar-date ${isSelected ? 'active' : ''}`}
+                    style={isToday && !isSelected ? { border: '2px solid #5d5fef', color: '#5d5fef' } : {}}
+                    onClick={() => setSelectedDate(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), i))}
+                >
+                    {i}
+                </div>
+            );
+        }
+        return days;
+    };
+
 
     return (
         <div className="dashboard-page">
-            <header className="page-header">
-                <div>
-                    <h1 className="page-title">
-                        My Workspace
-                        <span style={{ fontSize: '0.9rem', fontWeight: 'normal', color: '#6B778C', marginLeft: '12px' }}>
-                            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </span>
-                    </h1>
-                    <p className="page-subtitle">Welcome back, {user.username.split(' ')[0]}. Here is your daily overview.</p>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button className="btn-secondary" onClick={() => setShowCreateIssueModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '8px', border: 'none', background: 'white', color: '#0052CC', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                        <FaPlus /> Create Issue
-                    </button>
-                    <button className="btn-primary" onClick={() => setShowCreateProjectModal(true)}>
-                        <FaPlus /> Create Project
-                    </button>
-                </div>
-            </header>
+            {currentView === 'overview' ? (
+                <>
+                    <header className="greeting-header">
+                        <div>
+                            <div className="greeting-date">
+                                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                            </div>
+                            <h1 className="greeting-title">
+                                {getGreeting()}, <span>{user.username.split(' ')[0]}</span>
+                            </h1>
+                        </div>
+                    </header>
 
-            {currentView === 'overview' && (
-                <div className="stats-overview-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-                    <StatCard
-                        label="Total Tasks"
-                        value={myIssues.length}
-                        icon={<FaTasks />}
-                        color="blue"
-                        trend={`${pendingCount} Pending`}
-                        trendLabel="remaining"
-                        trendUp={true}
-                    />
-                    <StatCard
-                        label="Completed (7 Days)"
-                        value={doneThisWeek}
-                        icon={<FaCheckCircle />}
-                        color="green"
-                        trend={`${weeklyTrend}`}
-                        trendLabel="vs previous week"
-                        trendUp={weeklyDiff >= 0}
-                    />
-                    <StatCard
-                        label="Due Soon"
-                        value={dueSoonIssues.length}
-                        icon={<FaCalendarAlt />}
-                        color="orange"
-                        trend={dueSoonIssues.length > 0 ? "Action Required" : "On Track"}
-                        trendLabel={dueSoonIssues.length > 0 ? "deadlines approaching" : "no urgent issues"}
-                        trendUp={dueSoonIssues.length === 0}
-                    />
-                </div>
+                    <div className="incial-dashboard-grid">
+                        <div className="incial-main-column">
+                            {/* Current Focus Widget */}
+                            <div className="incial-glass-card" style={{ position: 'relative' }}>
+                                <div className="meeting-soon-badge">{currentFocusIssue ? (currentFocusIssue.priority || 'Action Info') : 'All Clear'}</div>
+                                <div className="focus-header">
+                                    <MdAdjust className="focus-header-icon" /> Current Focus
+                                </div>
+                                <div className="current-focus-card">
+                                    {currentFocusIssue ? (
+                                        <>
+                                            <div className="focus-details-wrapper">
+                                                <div className="focus-icon-box">
+                                                    <FaTasks style={{ fontSize: '1.2rem' }} />
+                                                </div>
+                                                <div className="focus-info">
+                                                    <h4 style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '300px' }}>{currentFocusIssue.title}</h4>
+                                                    <p><FaRegClock /> {currentFocusIssue.dueDate
+                                                        ? new Date(currentFocusIssue.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                        : 'No deadline set'} &nbsp;&bull;&nbsp; {currentFocusIssue.status}</p>
+                                                </div>
+                                            </div>
+                                            <button className="join-now-btn" onClick={() => handleIssueClick(currentFocusIssue)}>
+                                                View Task <MdArrowForward />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <div className="focus-details-wrapper">
+                                            <div className="focus-info">
+                                                <h4>No immediate tasks pending!</h4>
+                                                <p>Take a break or review your backlog.</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="incial-glass-card">
+                                <div className="focus-header">Your Queue</div>
+                                <div className="queue-list">
+                                    {filteredIssues.length > 0 ? (
+                                        filteredIssues.slice(0, 5).map(issue => {
+                                            const isDone = issue.status === 'Done';
+                                            const badgeClass =
+                                                issue.status === 'In Review' ? 'queue-badge-review' :
+                                                    issue.priority === 'High' ? 'queue-badge-high' :
+                                                        issue.priority === 'Medium' ? 'queue-badge-medium' :
+                                                            'queue-badge-low';
+                                            const displayBadge = issue.status === 'In Review' ? 'In Review' : issue.priority || 'Low';
+
+                                            // Format due date or created date
+                                            const displayTime = issue.dueDate
+                                                ? new Date(issue.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                : new Date(issue.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                                            return (
+                                                <div key={issue.id} className="queue-item" onClick={() => handleIssueClick(issue)}>
+                                                    <div className="queue-item-left">
+                                                        <div
+                                                            className={`queue-item-radio ${isDone ? 'done' : ''}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleKanbanDrag(issue.id, isDone ? 'To Do' : 'Done');
+                                                            }}
+                                                        ></div>
+                                                        <div className="queue-item-info">
+                                                            <h5>{issue.title}</h5>
+                                                            <p>{displayTime}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className={`queue-item-badge ${badgeClass}`}>
+                                                        {displayBadge}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="empty-state" style={{ background: 'transparent', border: 'none' }}>Your queue is empty. Relax!</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="incial-right-column">
+                            {/* Calendar & Agenda */}
+                            <div className="incial-glass-card">
+                                <div className="mini-calendar-header">
+                                    {calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                    <div className="mini-calendar-nav">
+                                        <MdChevronLeft onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))} />
+                                        <MdChevronRight onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))} />
+                                    </div>
+                                </div>
+                                <div className="mini-calendar-grid">
+                                    {renderCalendarDays()}
+                                </div>
+
+                                <div className="agenda-section">
+                                    <div className="agenda-header">Agenda for {selectedDate.getDate()} {selectedDate.toLocaleString('default', { month: 'short' })}</div>
+                                    {agendaIssues.length > 0 ? (
+                                        agendaIssues.map(issue => {
+                                            const timeStr = issue.dueDate
+                                                ? new Date(issue.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                : new Date(issue.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                            return (
+                                                <div key={issue.id} className="agenda-item" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={() => handleIssueClick(issue)}>
+                                                    <div className="agenda-time">{timeStr}</div>
+                                                    <div className="agenda-details" style={{ overflow: 'hidden', flex: 1 }}>
+                                                        <h6 style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{issue.title}</h6>
+                                                        <p>{issue.status} • {issue.priority}</p>
+                                                    </div>
+                                                    {issue.type === 'Meeting' && issue.description?.includes('http') && (
+                                                        <button
+                                                            className="btn-join-meeting"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const urlMatch = issue.description.match(/(https?:\/\/[^\s]+)/);
+                                                                if (urlMatch) window.open(urlMatch[0], '_blank');
+                                                            }}
+                                                            style={{
+                                                                padding: '6px 12px',
+                                                                background: '#10b981',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                borderRadius: '6px',
+                                                                fontSize: '0.8rem',
+                                                                fontWeight: '600',
+                                                                cursor: 'pointer',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: '6px',
+                                                                whiteSpace: 'nowrap'
+                                                            }}
+                                                        >
+                                                            <MdVideocam size={16} /> Join
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div style={{ color: '#7a869a', fontSize: '0.85rem' }}>No tasks scheduled for this date.</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <header className="page-header">
+                    <div>
+                        <h1 className="page-title">
+                            {currentView === 'board' ? 'Project Board' :
+                                currentView === 'timeline' ? 'Timeline' :
+                                    currentView === 'analytics' ? 'Analytics' :
+                                        currentView === 'teams' ? 'Registry' :
+                                            currentView === 'earnings' ? 'Earnings Vault' : 'Workspace View'}
+                        </h1>
+                        <p className="page-subtitle">Manage your workflow and track progress.</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <button className="btn-secondary" onClick={() => setShowCreateIssueModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '8px', border: 'none', background: 'white', color: '#0052CC', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                            <FaPlus /> Create Issue
+                        </button>
+                        <button className="btn-primary" onClick={() => setShowCreateProjectModal(true)}>
+                            <FaPlus /> Create Project
+                        </button>
+                    </div>
+                </header>
             )}
 
-            {currentView === 'overview' && <DashboardFilters projects={projects} onFilterChange={handleFilterChange} />}
+            {currentView === 'overview' && <div id="old-filters-injection-point" style={{ display: 'none' }}> <DashboardFilters projects={projects} onFilterChange={handleFilterChange} /> </div>}
 
             {currentView === 'analytics' ? (
                 <Analytics />
             ) : currentView === 'earnings' ? (
                 <MyEarnings />
-            ) : (
+            ) : currentView !== 'overview' && (
                 <div className="dashboard-content-grid">
                     {/* Main Content Area */}
                     <div className="section-container" style={{ flex: 2 }}>
                         <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h2>
                                 {currentView === 'board' ? 'Project Board' :
-                                    currentView === 'backlog' ? 'Project Backlog' :
-                                        `Workspace Activity (${filteredIssues.length})`}
+                                    `Workspace Activity (${filteredIssues.length})`}
                             </h2>
 
-                            {(currentView === 'board' || currentView === 'backlog') && projects.length > 0 && (
+                            {(currentView === 'board') && projects.length > 0 && (
                                 <select
                                     value={selectedBoardProject}
                                     onChange={(e) => setSelectedBoardProject(e.target.value)}
@@ -269,8 +475,6 @@ const Dashboard = () => {
                                     issues={filteredIssues.filter(i => i.projectId === selectedBoardProject)}
                                     onStatusChange={handleKanbanDrag}
                                 />
-                            ) : currentView === 'backlog' ? (
-                                <BacklogView projectId={selectedBoardProject} />
                             ) : currentView === 'timeline' ? (
                                 <TimelineView
                                     issues={filteredIssues}
@@ -348,6 +552,7 @@ const Dashboard = () => {
             <IssueDetailDrawer
                 isOpen={isDrawerOpen}
                 issue={selectedIssue}
+                projects={projects}
                 onClose={() => setIsDrawerOpen(false)}
                 onUpdate={handleIssueUpdate}
             />

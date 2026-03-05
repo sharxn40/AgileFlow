@@ -77,6 +77,128 @@
     padding: 60px;
 }
 
+/* --- Registry Tabs --- */
+.registry-tabs {
+    display: flex;
+    background: var(--theme-card-bg, #ffffff);
+    border-radius: 12px;
+    padding: 6px;
+    margin-bottom: 24px;
+    border: 1px solid var(--theme-border, rgba(0, 0, 0, 0.08));
+    width: max-content;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.registry-tab {
+    padding: 8px 24px;
+    background: transparent;
+    border: none;
+    color: var(--theme-text-muted, #6b778c);
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.registry-tab:hover {
+    color: var(--theme-text-main, #172b4d);
+}
+
+.registry-tab.active {
+    background: var(--theme-bg, #f4f5f7);
+    color: var(--theme-primary, #6366f1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Projects Grid View --- */
+.registry-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding-bottom: 40px;
+}
+
+.registry-project-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--theme-card-bg, #ffffff);
+    border: 1px solid var(--theme-border, rgba(0, 0, 0, 0.08));
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    position: relative;
+}
+
+.registry-project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+    border-color: var(--theme-primary);
+}
+
+.r-project-delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.registry-project-card:hover .r-project-delete-btn {
+    opacity: 1;
+}
+
+.r-project-delete-btn:hover {
+    background: #fee2e2;
+    color: #e53e3e;
+    transform: scale(1.1);
+}
+
+.r-project-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--theme-bg, #f4f5f7);
+    color: var(--theme-primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(99, 102, 241, 0.1);
+}
+
+.r-project-info h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--theme-text-main);
+}
+
+.r-project-key {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--theme-text-muted);
+    background: rgba(0, 0, 0, 0.04);
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.05em;
+}
+
 /* Two-panel Layout */
 .teams-layout {
     display: grid;
@@ -244,24 +366,28 @@
 }
 
 .members-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
 }
 
 .member-card {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px 16px;
-    background: var(--theme-bg, #f8fafc);
-    border-radius: 10px;
-    border: 1px solid var(--theme-border, rgba(0, 0, 0, 0.06));
-    transition: background 0.15s;
+    padding: 16px 20px;
+    background: var(--theme-bg, #ffffff);
+    border-radius: 12px;
+    border: 1px solid var(--theme-border, rgba(0, 0, 0, 0.08));
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .member-card:hover {
-    background: rgba(99, 102, 241, 0.04);
+    background: var(--theme-bg-hover, #f8fafc);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 .member-avatar {
@@ -349,4 +475,40 @@
     color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
     opacity: 1;
+}
+
+/* --- Team Detail Sub Tab Nav --- */
+.team-sub-header-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--theme-border, rgba(0, 0, 0, 0.08));
+}
+
+.team-sub-tab {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--theme-text-muted, #64748b);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.team-sub-tab:hover {
+    color: var(--theme-text-main, #1e293b);
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.team-sub-tab.active {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--theme-primary, #6366f1);
+}
+
+.btn-video-meeting:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }

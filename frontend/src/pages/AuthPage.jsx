@@ -123,7 +123,7 @@ const AuthPage = () => {
 
                 {/* Sign Up Form Container */}
                 <div className="form-container sign-up-container">
-                    <form onSubmit={handleRegisterSubmit}>
+                    <div style={{ padding: '0 50px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
                         <h1 style={{ marginBottom: '10px' }}>Create Account</h1>
                         <p style={{ marginBottom: '15px' }}>Use your Google email for auto-fill</p>
 
@@ -158,87 +158,92 @@ const AuthPage = () => {
                             </button>
                         </div>
 
+                        <span style={{ margin: '15px 0' }}>or use your email for registration</span>
+
                         {isSignUp && error && <div className="error-badge">{error}</div>}
 
-                        <div className="form-group">
-                            <label>Full Name</label>
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="e.g. John Doe"
-                                value={registerData.username}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="john@example.com"
-                                value={registerData.email}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group" style={{ position: 'relative' }}>
-                            <label>Password</label>
-                            <input
-                                type={showRegisterPassword ? "text" : "password"}
-                                name="password"
-                                placeholder="Choose a password"
-                                value={registerData.password}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-                            <span
-                                style={{
-                                    position: 'absolute',
-                                    right: '15px',
-                                    top: '40px',
-                                    cursor: 'pointer',
-                                    color: '#777'
-                                }}
-                                onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                            >
-                                {showRegisterPassword ? <FaEyeSlash /> : <FaEye />}
-                            </span>
-                        </div>
-                        <div className="form-group" style={{ position: 'relative' }}>
-                            <label>Confirm Password</label>
-                            <input
-                                type={showRegisterConfirm ? "text" : "password"}
-                                name="confirmPassword"
-                                placeholder="Confirm your password"
-                                value={registerData.confirmPassword}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-                            <span
-                                style={{
-                                    position: 'absolute',
-                                    right: '15px',
-                                    top: '40px',
-                                    cursor: 'pointer',
-                                    color: '#777'
-                                }}
-                                onClick={() => setShowRegisterConfirm(!showRegisterConfirm)}
-                            >
-                                {showRegisterConfirm ? <FaEyeSlash /> : <FaEye />}
-                            </span>
-                        </div>
+                        <form onSubmit={handleRegisterSubmit} style={{ width: '100%', padding: '0' }}>
+
+                            <div className="form-group">
+                                <label>Full Name</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    placeholder="e.g. John Doe"
+                                    value={registerData.username}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Email Address</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="john@example.com"
+                                    value={registerData.email}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group" style={{ position: 'relative' }}>
+                                <label>Password</label>
+                                <input
+                                    type={showRegisterPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="Choose a password"
+                                    value={registerData.password}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        right: '15px',
+                                        top: '40px',
+                                        cursor: 'pointer',
+                                        color: '#777'
+                                    }}
+                                    onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                >
+                                    {showRegisterPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
+                            </div>
+                            <div className="form-group" style={{ position: 'relative' }}>
+                                <label>Confirm Password</label>
+                                <input
+                                    type={showRegisterConfirm ? "text" : "password"}
+                                    name="confirmPassword"
+                                    placeholder="Confirm your password"
+                                    value={registerData.confirmPassword}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        right: '15px',
+                                        top: '40px',
+                                        cursor: 'pointer',
+                                        color: '#777'
+                                    }}
+                                    onClick={() => setShowRegisterConfirm(!showRegisterConfirm)}
+                                >
+                                    {showRegisterConfirm ? <FaEyeSlash /> : <FaEye />}
+                                </span>
+                            </div>
 
 
 
-                        <button type="submit" style={{ marginTop: '15px' }}>Sign Up</button>
-                    </form>
+                            <button type="submit" style={{ marginTop: '15px' }}>Sign Up</button>
+                        </form>
+                    </div>
                 </div>
 
                 {/* Sign In Form Container */}
                 <div className="form-container sign-in-container">
-                    <form onSubmit={handleLoginSubmit}>
-                        <h1>Sign in</h1>
+                    <div style={{ padding: '0 50px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                        <h1 style={{ marginBottom: '15px' }}>Sign in</h1>
                         <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                             <button
                                 type="button"
@@ -269,65 +274,68 @@ const AuthPage = () => {
                                 Sign in with Google
                             </button>
                         </div>
-                        <span>or use your account</span>
+                        <span style={{ margin: '15px 0' }}>or use your account</span>
 
                         {!isSignUp && error && <div className="error-badge">{error}</div>}
 
-                        <div className="form-group">
-                            <label>Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                value={loginData.email}
-                                onChange={handleLoginChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group" style={{ position: 'relative' }}>
-                            <label>Password</label>
-                            <input
-                                type={showLoginPassword ? "text" : "password"}
-                                name="password"
-                                placeholder="Enter your password"
-                                value={loginData.password}
-                                onChange={handleLoginChange}
-                                required
-                            />
-                            <span
-                                style={{
-                                    position: 'absolute',
-                                    right: '15px',
-                                    top: '40px',
-                                    cursor: 'pointer',
-                                    color: '#777'
-                                }}
-                                onClick={() => setShowLoginPassword(!showLoginPassword)}
-                            >
-                                {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
-                            </span>
-                        </div>
+                        <form onSubmit={handleLoginSubmit} style={{ width: '100%', padding: '0' }}>
 
-                        <div className="remember-forgot-row">
-                            <label className="checkbox-container">
+                            <div className="form-group">
+                                <label>Email</label>
                                 <input
-                                    type="checkbox"
-                                    checked={rememberMe}
-                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                    type="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    value={loginData.email}
+                                    onChange={handleLoginChange}
+                                    required
                                 />
-                                <span className="checkmark"></span>
-                                Remember Me
-                            </label>
-                            <span
-                                onClick={() => navigate('/forgot-password')}
-                                style={{ cursor: 'pointer', color: '#0052CC', fontWeight: 'bold' }}
-                            >
-                                Forgot your password?
-                            </span>
-                        </div>
+                            </div>
+                            <div className="form-group" style={{ position: 'relative' }}>
+                                <label>Password</label>
+                                <input
+                                    type={showLoginPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    value={loginData.password}
+                                    onChange={handleLoginChange}
+                                    required
+                                />
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        right: '15px',
+                                        top: '40px',
+                                        cursor: 'pointer',
+                                        color: '#777'
+                                    }}
+                                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                                >
+                                    {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
+                            </div>
 
-                        <button type="submit">Sign In</button>
-                    </form>
+                            <div className="remember-forgot-row">
+                                <label className="checkbox-container">
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                    />
+                                    <span className="checkmark"></span>
+                                    Remember Me
+                                </label>
+                                <span
+                                    onClick={() => navigate('/forgot-password')}
+                                    style={{ cursor: 'pointer', color: '#0052CC', fontWeight: 'bold' }}
+                                >
+                                    Forgot your password?
+                                </span>
+                            </div>
+
+                            <button type="submit">Sign In</button>
+                        </form>
+                    </div>
                 </div>
 
                 {/* Overlay Container (The slider) */}

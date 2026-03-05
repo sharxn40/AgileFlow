@@ -1,8 +1,8 @@
 .budget-config-container {
-    padding: 20px;
-    background: var(--bg-secondary);
+    padding: 24px;
+    background: transparent;
     border-radius: 8px;
-    color: var(--text-primary);
+    color: #1a202c;
 }
 
 .config-section {
@@ -19,18 +19,31 @@
 }
 
 .form-group label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .form-group input,
 .form-group select {
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #2d3748;
     min-width: 200px;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
 
 .payment-table {
@@ -41,14 +54,18 @@
 
 .payment-table th,
 .payment-table td {
-    padding: 12px;
+    padding: 14px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
 }
 
 .payment-table th {
-    color: var(--text-secondary);
-    font-weight: 500;
+    color: #718096;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
 }
 
 .status-badge {
@@ -76,4 +93,41 @@
 .status-badge.failed {
     background: #fee2e2;
     color: #991b1b;
+}
+
+/* Danger Zone Custom Styles */
+.danger-zone {
+    padding: 24px;
+    background: #fff1f0;
+    border: 1px solid #ffa39e;
+    border-radius: 8px;
+    margin-top: 32px;
+}
+
+.danger-zone h3 {
+    margin: 0 0 12px 0;
+    color: #cf1322 !important;
+    font-size: 1.25rem;
+}
+
+.danger-zone p {
+    color: #4a5568 !important;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.danger-zone .btn-danger {
+    background: transparent;
+    border: 2px solid #cf1322 !important;
+    color: #cf1322 !important;
+    padding: 10px 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.danger-zone .btn-danger:hover {
+    background: #cf1322 !important;
+    color: white !important;
 }

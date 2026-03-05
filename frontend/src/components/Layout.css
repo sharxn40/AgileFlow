@@ -3,10 +3,8 @@
     flex-direction: row;
     height: 100vh;
     overflow: hidden;
-    background-color: #F4F5F7;
-    /* Jira-like background */
+    background-color: #f8fbff;
     position: relative;
-    /* Context for root absolute items if needed */
 }
 
 .app-main-content {
@@ -14,8 +12,11 @@
     flex-direction: column;
     flex: 1;
     overflow: hidden;
-    /* Prevent body scroll, let page-container scroll */
     position: relative;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(219, 250, 240, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 90% 20%, rgba(240, 230, 255, 0.7) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(220, 245, 255, 0.6) 0%, transparent 60%);
 }
 
 .app-page-container {

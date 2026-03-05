@@ -64,6 +64,12 @@ class Sprint {
         });
         return { id, ...updates };
     }
+
+    static async delete(id) {
+        if (!id) return false;
+        await Sprint.collection.doc(id).delete();
+        return true;
+    }
 }
 
 module.exports = Sprint;

@@ -5,7 +5,7 @@ import './IssueDetailDrawer.css';
 import CommentSection from './CommentSection';
 import { getDeadlineStatus, formatCountdown, getStatusColor } from '../../utils/deadlineUtils';
 
-const IssueDetailDrawer = ({ issue, isOpen, onClose, onUpdate }) => {
+const IssueDetailDrawer = ({ issue, isOpen, onClose, onUpdate, projects }) => {
     const [editedIssue, setEditedIssue] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -168,8 +168,35 @@ const IssueDetailDrawer = ({ issue, isOpen, onClose, onUpdate }) => {
                             <div className="sidebar-item">
                                 <span className="item-label">Assignee</span>
                                 <div className="user-badge">
-                                    <FaUser /> {editedIssue.assigneeId || 'Unassigned'}
+                                    <FaUser /> {editedIssue.assigneeDisplay || editedIssue.assignee?.username || editedIssue.assigneeId || 'Unassigned'}
                                 </div>
+                            </div>
+
+                            <div className="sidebar-item">
+                                <span className="item-label">Project</span>
+                                <select
+                                    className="drawer-select"
+                                    value={editedIssue.projectId || ''}
+                                    onChange={e => setEditedIssue({ ...editedIssue, projectId: e.target.value })}
+                                    disabled={!projects || projects.length === 0}
+                                    style={{ padding: '6px', fontSize: '0.9rem' }}
+                                >
+                                    <option value="" disabled>No Project Found</option>
+                                    {(projects || []).map(p => (
+                                        <option key={p.id} value={p.id}>{p.name}</option>
+                                    ))}
+                                    {editedIssue.projectId === 'TEAM_MEETING' && <option value="TEAM_MEETING">Team Meeting</option>}
+                                </select>
+                            </div>
+
+                            <div className="sidebar-item">
+                                <span className="item-label">Type / Tag</span>
+                                <input
+                                    type="text"
+                                    className="drawer-input-sm"
+                                    value={editedIssue.type || ''}
+                                    onChange={e => setEditedIssue({ ...editedIssue, type: e.target.value })}
+                                />
                             </div>
 
                             <div className="sidebar-item">
@@ -203,16 +230,6 @@ const IssueDetailDrawer = ({ issue, isOpen, onClose, onUpdate }) => {
                                         {deadlineText}
                                     </div>
                                 )}
-                            </div>
-
-                            <div className="sidebar-item">
-                                <span className="item-label">Story Points</span>
-                                <input
-                                    type="number"
-                                    className="drawer-input-sm"
-                                    value={editedIssue.storyPoints || 0}
-                                    onChange={e => setEditedIssue({ ...editedIssue, storyPoints: parseInt(e.target.value) })}
-                                />
                             </div>
 
                             <div className="sidebar-item">
