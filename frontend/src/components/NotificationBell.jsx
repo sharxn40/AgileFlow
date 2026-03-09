@@ -5,9 +5,13 @@ import './NotificationBell.css';
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [toastQueue, setToastQueue] = useState([]); // Store transient toast alerts
+
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     useEffect(() => {
+        let lastNotifsMap = new Map();
+
         const fetchNotifs = async () => {
             const token = localStorage.getItem('token');
             if (!token) return;
@@ -15,7 +19,28 @@ const NotificationBell = () => {
                 const res = await fetch('http://localhost:3000/api/notifications', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (res.ok) setNotifications(await res.json());
+                if (res.ok) {
+                    const fetched = await res.json();
+
+                    // Check for new, unseen notifications to trigger a toast
+                    if (lastNotifsMap.size > 0) {
+                        const newNotifs = fetched.filter(n => !n.isRead && !lastNotifsMap.has(n.id));
+                        if (newNotifs.length > 0) {
+                            setToastQueue(prev => [...prev, ...newNotifs]);
+
+                            // Auto-remove toasts after 5 seconds
+                            newNotifs.forEach(n => {
+                                setTimeout(() => {
+                                    setToastQueue(current => current.filter(t => t.id !== n.id));
+                                }, 5000);
+                            });
+                        }
+                    }
+
+                    // Update memory maps
+                    lastNotifsMap = new Map(fetched.map(n => [n.id, n]));
+                    setNotifications(fetched);
+                }
             } catch (e) { console.error(e); }
         };
 
@@ -62,6 +87,24 @@ const NotificationBell = () => {
                     )}
                 </div>
             )}
+
+            {/* Global Toasts Container - Rendered absolutely */}
+            <div className="notif-toast-container">
+                {toastQueue.map((toast) => (
+                    <div key={toast.id} className="notif-toast slide-in-right">
+                        <div className="notif-toast-icon">
+                            <FaBell />
+                        </div>
+                        <div className="notif-toast-content">
+                            <strong>New Alert</strong>
+                            <p>{toast.message}</p>
+                        </div>
+                        <button className="notif-toast-close" onClick={() => setToastQueue(q => q.filter(t => t.id !== toast.id))}>
+                            &times;
+                        </button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

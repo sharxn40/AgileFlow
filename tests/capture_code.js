@@ -1,0 +1,32 @@
+const { Builder, By } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const fs = require('fs');
+
+(async function takeScreenshot() {
+    let options = new chrome.Options();
+    options.addArguments('--headless=new');
+    options.addArguments('--window-size=1200,2200');
+    options.addArguments('--hide-scrollbars');
+
+    let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+    try {
+        console.log("Loading HTML...");
+        await driver.get('file:///c:/temp/code_renderer.html');
+
+        await driver.sleep(1500);
+
+        console.log("Locating the code element...");
+        let element = await driver.findElement(By.id('capture'));
+
+        console.log("Taking native screenshot of the element...");
+        let encodedString = await element.takeScreenshot();
+
+        console.log("Saving image payload...");
+        fs.writeFileSync('task1_code_screenshot.png', encodedString, 'base64');
+        console.log("Done! saved as task1_code_screenshot.png");
+    } catch (e) {
+        console.error("Error:", e);
+    } finally {
+        await driver.quit();
+    }
+})();

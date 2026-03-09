@@ -334,6 +334,28 @@ const AuthPage = () => {
                             </div>
 
                             <button type="submit">Sign In</button>
+
+                            <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                <p style={{ fontSize: '0.8rem', color: '#777', marginBottom: '10px' }}>Demo Access:</p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setLoginData({ email: 'lead@demo.com', password: 'password123' });
+                                    }}
+                                    style={{ width: '100%', marginBottom: '10px', background: 'transparent', border: '1px solid #333', color: '#fff' }}
+                                >
+                                    Fill as Project Lead
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setLoginData({ email: 'admin@agileflow.com', password: 'admin123' });
+                                    }}
+                                    style={{ width: '100%', background: 'transparent', border: '1px solid #333', color: '#fff' }}
+                                >
+                                    Fill as Admin
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
