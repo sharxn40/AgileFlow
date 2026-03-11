@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -44,7 +45,7 @@ const AuthPage = () => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(loginData),
@@ -66,7 +67,7 @@ const AuthPage = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -93,7 +94,7 @@ const AuthPage = () => {
                 });
                 const userInfo = await userInfoRes.json();
 
-                const response = await fetch('http://localhost:3000/api/auth/google', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: tokenResponse.access_token, userInfo }),
@@ -109,7 +110,7 @@ const AuthPage = () => {
                 }
             } catch (err) {
                 console.error("AuthPage Connection Error:", err);
-                setError(`Failed to connect to backend at http://localhost:3000. Error: ${err.message}`);
+                setError(`Failed to connect to backend at ${API_BASE_URL}. Error: ${err.message}`);
             }
         },
         onError: () => setError('Google Login Failed. Please try again.'),
@@ -381,3 +382,5 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
+
+

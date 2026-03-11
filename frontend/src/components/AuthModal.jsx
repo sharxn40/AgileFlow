@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -42,7 +43,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(loginData),
@@ -67,7 +68,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -96,7 +97,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                 const userInfo = await userInfoRes.json();
 
                 // Send the access token and userInfo to our backend
-                const response = await fetch('http://localhost:3000/api/auth/google', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: tokenResponse.access_token, userInfo }),
@@ -115,7 +116,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                 }
             } catch (networkError) {
                 console.error("Critical Backend Connection Error:", networkError);
-                setError(`Failed to connect to authentication server at http://localhost:3000. Error: ${networkError.message}`);
+                setError(`Failed to connect to authentication server at ${API_BASE_URL}. Error: ${networkError.message}`);
             }
         },
         onError: () => setError('Google Login Failed. Please try again.'),
@@ -308,3 +309,5 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
 };
 
 export default AuthModal;
+
+

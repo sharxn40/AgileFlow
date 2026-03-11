@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaEnvelope, FaLink, FaCopy } from 'react-icons/fa';
@@ -22,7 +23,7 @@ const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
         setError('');
         setSuccess(null);
         try {
-            const res = await authFetch(`http://localhost:3000/api/teams/${team.id}/invite`, {
+            const res = await authFetch(`${API_BASE_URL}/api/teams/${team.id}/invite`, {
                 method: 'POST',
                 body: JSON.stringify({ email: email.trim(), jobDescription, paymentAmount: Number(paymentAmount) || 0 }),
             });
@@ -143,3 +144,6 @@ const InviteToTeamModal = ({ team, onClose, onInviteSent }) => {
 };
 
 export default InviteToTeamModal;
+
+
+

@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import KanbanCard from '../components/dashboard/KanbanCard';
@@ -29,7 +30,7 @@ const TaskBoard = () => {
             // setLoading(true); // Don't show loading spinner on background refresh
             const token = localStorage.getItem('token');
             // Cache bust with timestamp
-            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/board?t=${Date.now()}`, {
+            const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/board?t=${Date.now()}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -131,7 +132,7 @@ const TaskBoard = () => {
         // API Update
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/issues/${taskId}`, {
+            await fetch(`${API_BASE_URL}/api/issues/${taskId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ const TaskBoard = () => {
         // API Update
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/issues/${taskId}`, {
+            await fetch(`${API_BASE_URL}/api/issues/${taskId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -215,7 +216,7 @@ const TaskBoard = () => {
         };
 
         try {
-            const res = await fetch('http://localhost:3000/api/issues', {
+            const res = await fetch(`${API_BASE_URL}/api/issues`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -328,7 +329,7 @@ const TaskBoard = () => {
                     try {
                         const token = localStorage.getItem('token');
                         const deleteId = taskToDelete.id || taskToDelete._id;
-                        await fetch(`http://localhost:3000/api/issues/${deleteId}`, {
+                        await fetch(`${API_BASE_URL}/api/issues/${deleteId}`, {
                             method: 'DELETE',
                             headers: { Authorization: `Bearer ${token}` }
                         });
@@ -346,3 +347,5 @@ const TaskBoard = () => {
 };
 
 export default TaskBoard;
+
+

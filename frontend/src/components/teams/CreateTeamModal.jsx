@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaUsers } from 'react-icons/fa';
@@ -18,7 +19,7 @@ const CreateTeamModal = ({ onClose, onCreated }) => {
         setLoading(true);
         setError('');
         try {
-            const res = await authFetch('http://localhost:3000/api/teams', {
+            const res = await authFetch(`${API_BASE_URL}/api/teams`, {
                 method: 'POST',
                 body: JSON.stringify({ name: name.trim(), description }),
             });
@@ -88,3 +89,6 @@ const CreateTeamModal = ({ onClose, onCreated }) => {
 };
 
 export default CreateTeamModal;
+
+
+

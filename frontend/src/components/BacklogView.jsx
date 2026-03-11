@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -14,7 +15,7 @@ const BacklogView = ({ projectId: propProjectId }) => {
     const fetchBacklog = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/backlog`, {
+            const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/backlog`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -45,7 +46,7 @@ const BacklogView = ({ projectId: propProjectId }) => {
 
     const handleStartSprint = async (sprintId) => {
         const token = localStorage.getItem('token');
-        await fetch(`http://localhost:3000/api/sprints/${sprintId}/start`, {
+        await fetch(`${API_BASE_URL}/api/sprints/${sprintId}/start`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -59,7 +60,7 @@ const BacklogView = ({ projectId: propProjectId }) => {
         }
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/sprints`, {
+            const res = await fetch(`${API_BASE_URL}/api/sprints`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({
@@ -94,7 +95,7 @@ const BacklogView = ({ projectId: propProjectId }) => {
 
         // Optimistic UI could go here, but for now just call API and refresh
         const token = localStorage.getItem('token');
-        await fetch(`http://localhost:3000/api/issues/${draggableId}`, {
+        await fetch(`${API_BASE_URL}/api/issues/${draggableId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify({ sprintId }) // null if backlog, id if sprint
@@ -192,3 +193,5 @@ const BacklogView = ({ projectId: propProjectId }) => {
 };
 
 export default BacklogView;
+
+

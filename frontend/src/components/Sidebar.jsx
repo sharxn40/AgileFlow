@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { MdDashboard, MdTask, MdViewKanban, MdAnalytics, MdSettings, MdLogout, MdDashboard as MdDashIcon, MdAttachMoney } from 'react-icons/md';
@@ -27,7 +28,7 @@ const Sidebar = ({ isOpen, currentView, onViewChange }) => {
                 // Removed bulk project/team fetches since they are now in the Registry Hub.
 
                 // Fetch Fresh Profile to ensure Role is up to date
-                const profileRes = await fetch('http://localhost:3000/api/users/profile', {
+                const profileRes = await fetch(`${API_BASE_URL}/api/users/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (profileRes.ok) {
@@ -147,3 +148,5 @@ const Sidebar = ({ isOpen, currentView, onViewChange }) => {
 };
 
 export default Sidebar;
+
+

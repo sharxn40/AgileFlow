@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { FaPaperPlane, FaPaperclip, FaCode, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
@@ -7,7 +8,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './TeamChat.css';
 
 // Initialize socket exactly once
-const SOCKET_SERVER_URL = import.meta.env?.VITE_API_URL || 'http://localhost:3000';
+const SOCKET_SERVER_URL = import.meta.env?.VITE_API_BASE_URL || API_BASE_URL;
 let socket;
 
 const TeamChat = forwardRef(({ team }, ref) => {
@@ -28,7 +29,7 @@ const TeamChat = forwardRef(({ team }, ref) => {
         const fetchMessages = async () => {
             setLoading(true);
             try {
-                const res = await authFetch(`http://localhost:3000/api/teams/${team.id}/messages`);
+                const res = await authFetch(`${API_BASE_URL}/api/teams/${team.id}/messages`);
                 if (res.ok) {
                     const data = await res.json();
                     setMessages(data);
@@ -102,7 +103,7 @@ const TeamChat = forwardRef(({ team }, ref) => {
 
         // Persist to database
         try {
-            const res = await authFetch(`http://localhost:3000/api/teams/${team.id}/messages`, {
+            const res = await authFetch(`${API_BASE_URL}/api/teams/${team.id}/messages`, {
                 method: 'POST',
                 body: JSON.stringify({
                     text: messageData.text,
@@ -145,7 +146,7 @@ const TeamChat = forwardRef(({ team }, ref) => {
             setMessages(prev => [...prev, messageData]);
 
             try {
-                const res = await authFetch(`http://localhost:3000/api/teams/${team.id}/messages`, {
+                const res = await authFetch(`${API_BASE_URL}/api/teams/${team.id}/messages`, {
                     method: 'POST',
                     body: JSON.stringify({
                         text: messageData.text,
@@ -173,7 +174,7 @@ const TeamChat = forwardRef(({ team }, ref) => {
         try {
             // 1. Upload the file
             const token = localStorage.getItem('token');
-            const uploadRes = await fetch(`http://localhost:3000/api/teams/${team.id}/messages/upload`, {
+            const uploadRes = await fetch(`${API_BASE_URL}/api/teams/${team.id}/messages/upload`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
@@ -183,8 +184,8 @@ const TeamChat = forwardRef(({ team }, ref) => {
                 const { url, mimetype } = await uploadRes.json();
 
                 // 2. Send the message with the attachment
-                const fullUrl = `http://localhost:3000${url}`;
-                const msgRes = await authFetch(`http://localhost:3000/api/teams/${team.id}/messages`, {
+                const fullUrl = `${API_BASE_URL}${url}`;
+                const msgRes = await authFetch(`${API_BASE_URL}/api/teams/${team.id}/messages`, {
                     method: 'POST',
                     body: JSON.stringify({
                         text: `Sent a file: ${file.name}`,
@@ -331,3 +332,6 @@ const TeamChat = forwardRef(({ team }, ref) => {
 });
 
 export default TeamChat;
+
+
+

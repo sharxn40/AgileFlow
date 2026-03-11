@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUsers, FaPlus, FaCrown, FaEnvelope, FaTrash, FaLink, FaCopy, FaCheck, FaProjectDiagram, FaVideo } from 'react-icons/fa';
@@ -36,8 +37,8 @@ const TeamsPage = () => {
             setLoading(true);
             try {
                 const [pRes, tRes] = await Promise.all([
-                    fetch('http://localhost:3000/api/projects', { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch('http://localhost:3000/api/teams', { headers: { Authorization: `Bearer ${token}` } })
+                    fetch(`${API_BASE_URL}/api/projects`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch(`${API_BASE_URL}/api/teams`, { headers: { Authorization: `Bearer ${token}` } })
                 ]);
 
                 if (pRes.ok) {
@@ -95,7 +96,7 @@ const TeamsPage = () => {
             onConfirm: async () => {
                 setConfirmConfig(prev => ({ ...prev, isOpen: false }));
                 try {
-                    const res = await fetch(`http://localhost:3000/api/teams/${teamId}/members/${userId}`, {
+                    const res = await fetch(`${API_BASE_URL}/api/teams/${teamId}/members/${userId}`, {
                         method: 'DELETE',
                         headers: { Authorization: `Bearer ${token}` }
                     });
@@ -140,7 +141,7 @@ const TeamsPage = () => {
             onConfirm: async () => {
                 setConfirmConfig(prev => ({ ...prev, isOpen: false }));
                 try {
-                    const res = await fetch(`http://localhost:3000/api/teams/${teamId}`, {
+                    const res = await fetch(`${API_BASE_URL}/api/teams/${teamId}`, {
                         method: 'DELETE',
                         headers: { Authorization: `Bearer ${token}` }
                     });
@@ -165,7 +166,7 @@ const TeamsPage = () => {
             onConfirm: async () => {
                 setConfirmConfig(prev => ({ ...prev, isOpen: false }));
                 try {
-                    const res = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+                    const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
                         method: 'DELETE',
                         headers: { Authorization: `Bearer ${token}` }
                     });
@@ -184,7 +185,7 @@ const TeamsPage = () => {
 
     const handleScheduleMeeting = async (meetingPayload) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/teams/${selectedTeam.id}/schedule-meeting`, {
+            const res = await fetch(`${API_BASE_URL}/api/teams/${selectedTeam.id}/schedule-meeting`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify(meetingPayload)
@@ -477,3 +478,5 @@ const TeamsPage = () => {
 };
 
 export default TeamsPage;
+
+

@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useOutletContext } from 'react-router-dom';
 import { FaTasks, FaCheckCircle, FaExclamationCircle, FaRegClock, FaProjectDiagram, FaPlus, FaCalendarAlt, FaUserPlus } from 'react-icons/fa';
@@ -60,8 +61,8 @@ const Dashboard = () => {
 
                 // Force fresh fetch by adding timestamp
                 const [projectsRes, tasksRes] = await Promise.all([
-                    fetch(`http://localhost:3000/api/projects?t=${Date.now()}`, { headers }),
-                    fetch(`http://localhost:3000/api/issues/my-issues?t=${Date.now()}`, { headers })
+                    fetch(`${API_BASE_URL}/api/projects?t=${Date.now()}`, { headers }),
+                    fetch(`${API_BASE_URL}/api/issues/my-issues?t=${Date.now()}`, { headers })
                 ]);
 
                 if (projectsRes.ok) {
@@ -107,7 +108,7 @@ const Dashboard = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/issues/${issue.id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/issues/${issue.id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -124,7 +125,7 @@ const Dashboard = () => {
         setMyIssues(updatedList);
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/issues/${updatedIssue.id}`, {
+            await fetch(`${API_BASE_URL}/api/issues/${updatedIssue.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify(updatedIssue)
@@ -140,7 +141,7 @@ const Dashboard = () => {
         setMyIssues(prev => prev.map(issue => issue.id === id ? { ...issue, status: newStatus } : issue));
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/issues/${id}`, {
+            await fetch(`${API_BASE_URL}/api/issues/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status: newStatus })
@@ -162,7 +163,7 @@ const Dashboard = () => {
             const currentUser = JSON.parse(localStorage.getItem('user'));
             const assigneeId = taskData.assigneeId || currentUser.id || currentUser._id;
             const payload = { ...taskData, assigneeId, reporterId: currentUser.id || currentUser._id, status: 'To Do' };
-            const res = await fetch('http://localhost:3000/api/issues', {
+            const res = await fetch(`${API_BASE_URL}/api/issues`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify(payload)
@@ -567,3 +568,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+

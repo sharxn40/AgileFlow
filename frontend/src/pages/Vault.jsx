@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaLock, FaBriefcase, FaMoneyBillWave, FaCheckCircle, FaSpinner } from 'react-icons/fa';
@@ -24,7 +25,7 @@ const Vault = () => {
 
     const fetchContracts = async () => {
         try {
-            const res = await authFetch('http://localhost:3000/api/vault/contracts');
+            const res = await authFetch(`${API_BASE_URL}/api/vault/contracts`);
             const data = await res.json();
             if (res.ok) {
                 setContracts(data);
@@ -40,13 +41,13 @@ const Vault = () => {
         setActionLoading(contract.id);
         try {
             if (type === 'submit') {
-                const res = await authFetch(`http://localhost:3000/api/vault/contracts/${contract.id}/submit`, { method: 'POST' });
+                const res = await authFetch(`${API_BASE_URL}/api/vault/contracts/${contract.id}/submit`, { method: 'POST' });
                 const resData = await res.json();
                 if (res.ok) fetchContracts();
                 else alert(resData.message || 'Failed to submit job.');
                 setActionLoading(null);
             } else if (type === 'pay') {
-                const orderRes = await authFetch(`http://localhost:3000/api/vault/contracts/${contract.id}/order`, { method: 'POST' });
+                const orderRes = await authFetch(`${API_BASE_URL}/api/vault/contracts/${contract.id}/order`, { method: 'POST' });
                 const orderData = await orderRes.json();
 
                 if (!orderRes.ok) {
@@ -64,7 +65,7 @@ const Vault = () => {
                     order_id: orderData.order.id,
                     handler: async function (response) {
                         try {
-                            const verifyRes = await authFetch(`http://localhost:3000/api/vault/contracts/${contract.id}/pay`, {
+                            const verifyRes = await authFetch(`${API_BASE_URL}/api/vault/contracts/${contract.id}/pay`, {
                                 method: 'POST',
                                 body: JSON.stringify({
                                     razorpay_payment_id: response.razorpay_payment_id,
@@ -237,3 +238,5 @@ const Vault = () => {
 };
 
 export default Vault;
+
+

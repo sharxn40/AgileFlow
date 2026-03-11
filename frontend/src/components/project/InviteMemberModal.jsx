@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState } from 'react';
 import { FaPaperPlane, FaTimes } from 'react-icons/fa';
 
@@ -15,7 +16,7 @@ const InviteMemberModal = ({ isOpen, onClose, projectId }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/invitations/invite', {
+            const res = await fetch(`${API_BASE_URL}/api/invitations/invite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,3 +105,6 @@ const InviteMemberModal = ({ isOpen, onClose, projectId }) => {
 };
 
 export default InviteMemberModal;
+
+
+

@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaExclamationTriangle, FaSpinner } from 'react-icons/fa';
@@ -21,7 +22,7 @@ const AcceptInvite = () => {
                     return;
                 }
 
-                const res = await fetch('http://localhost:3000/api/invitations/accept', {
+                const res = await fetch(`${API_BASE_URL}/api/invitations/accept`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,3 +103,5 @@ const AcceptInvite = () => {
 };
 
 export default AcceptInvite;
+
+

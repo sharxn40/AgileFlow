@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState } from 'react';
 import './CommentSection.css';
 import { FaPaperPlane, FaUserCircle } from 'react-icons/fa';
@@ -13,7 +14,7 @@ const CommentSection = ({ issueId, comments = [], onAddComment }) => {
         setSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/issues/${issueId}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/api/issues/${issueId}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,3 +98,6 @@ const CommentSection = ({ issueId, comments = [], onAddComment }) => {
 };
 
 export default CommentSection;
+
+
+

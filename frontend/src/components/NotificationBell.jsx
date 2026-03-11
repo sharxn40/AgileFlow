@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { FaBell } from 'react-icons/fa';
 import './NotificationBell.css';
@@ -16,7 +17,7 @@ const NotificationBell = () => {
             const token = localStorage.getItem('token');
             if (!token) return;
             try {
-                const res = await fetch('http://localhost:3000/api/notifications', {
+                const res = await fetch(`${API_BASE_URL}/api/notifications`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -52,7 +53,7 @@ const NotificationBell = () => {
     const markRead = async (id) => {
         const token = localStorage.getItem('token');
         try {
-            await fetch(`http://localhost:3000/api/notifications/${id}/read`, {
+            await fetch(`${API_BASE_URL}/api/notifications/${id}/read`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -110,3 +111,5 @@ const NotificationBell = () => {
 };
 
 export default NotificationBell;
+
+

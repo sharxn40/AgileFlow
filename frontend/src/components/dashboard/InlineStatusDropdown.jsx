@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState, useRef, useEffect } from 'react';
 import './InlineStatusDropdown.css';
 
@@ -28,7 +29,7 @@ const InlineStatusDropdown = ({ issue, onStatusChange }) => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/issues/${issue.id || issue._id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/issues/${issue.id || issue._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,3 +74,6 @@ const InlineStatusDropdown = ({ issue, onStatusChange }) => {
 };
 
 export default InlineStatusDropdown;
+
+
+

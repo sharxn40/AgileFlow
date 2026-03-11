@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import './MyEarnings.css';
 
@@ -12,7 +13,7 @@ const MyEarnings = () => {
             try {
                 const token = localStorage.getItem('token');
                 console.log("Fetching earnings with token:", token ? "Present" : "Missing");
-                const res = await fetch('http://localhost:3000/api/payments/mine', {
+                const res = await fetch(`${API_BASE_URL}/api/payments/mine`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 console.log("Earnings response status:", res.status);
@@ -24,7 +25,7 @@ const MyEarnings = () => {
                     const pIds = [...new Set(data.payments.map(p => p.projectId))];
                     const pMap = {};
                     await Promise.all(pIds.map(async id => {
-                        const pRes = await fetch(`http://localhost:3000/api/projects/${id}`, {
+                        const pRes = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         if (pRes.ok) {
@@ -106,3 +107,5 @@ const MyEarnings = () => {
 };
 
 export default MyEarnings;
+
+

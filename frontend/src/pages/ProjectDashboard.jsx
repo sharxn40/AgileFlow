@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useParams, Outlet, Link, useLocation } from 'react-router-dom';
 import './ProjectDashboard.css';
@@ -17,7 +18,7 @@ const ProjectDashboard = () => {
                 // For structure, assume we can get basic project info
                 // Mocking for now until singular project fetch endpoint is verified generic
                 // Or I can use the existing /board endpoint which returns project data
-                const res = await fetch(`http://localhost:3000/api/projects/${projectId}/board`, {
+                const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/board`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -75,3 +76,5 @@ const ProjectDashboard = () => {
 };
 
 export default ProjectDashboard;
+
+

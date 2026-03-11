@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -25,8 +26,8 @@ const CalendarView = () => {
                 const headers = { 'Authorization': `Bearer ${token}` };
 
                 const [issuesRes, projectsRes] = await Promise.all([
-                    fetch('http://localhost:3000/api/issues/my-issues', { headers }),
-                    fetch('http://localhost:3000/api/projects', { headers })
+                    fetch(`${API_BASE_URL}/api/issues/my-issues`, { headers }),
+                    fetch(`${API_BASE_URL}/api/projects`, { headers })
                 ]);
 
                 if (issuesRes.ok) setIssues(await issuesRes.json());
@@ -63,7 +64,7 @@ const CalendarView = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/issues/${updatedIssue.id}`, {
+            await fetch(`${API_BASE_URL}/api/issues/${updatedIssue.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ const CalendarView = () => {
     const handleCreateTask = async (taskData) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/issues', {
+            const res = await fetch(`${API_BASE_URL}/api/issues`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -194,3 +195,5 @@ const CalendarView = () => {
 };
 
 export default CalendarView;
+
+

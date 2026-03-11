@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProjectLeadDashboard.css';
@@ -41,7 +42,7 @@ const ProjectLeadDashboard = () => {
                 const headers = { 'Authorization': `Bearer ${token}` };
 
                 // 1. Fetch Projects List First
-                const projectsRes = await fetch('http://localhost:3000/api/project-lead/projects', { headers });
+                const projectsRes = await fetch(`${API_BASE_URL}/api/project-lead/projects`, { headers });
                 if (projectsRes.ok) {
                     const projectsData = await projectsRes.json();
                     setProjects(projectsData);
@@ -59,8 +60,8 @@ const ProjectLeadDashboard = () => {
 
                     // 2. Fetch Stats & Team for Active Project
                     const [statsRes, teamRes] = await Promise.all([
-                        fetch(`http://localhost:3000/api/project-lead/stats?projectId=${activeProjectId}`, { headers }),
-                        fetch(`http://localhost:3000/api/project-lead/team?projectId=${activeProjectId}`, { headers })
+                        fetch(`${API_BASE_URL}/api/project-lead/stats?projectId=${activeProjectId}`, { headers }),
+                        fetch(`${API_BASE_URL}/api/project-lead/team?projectId=${activeProjectId}`, { headers })
                     ]);
 
                     if (statsRes.ok) setStats(await statsRes.json());
@@ -92,7 +93,7 @@ const ProjectLeadDashboard = () => {
     const handleSearch = async (query) => {
         try {
             const token = localStorage.getItem('token');
-            const url = `http://localhost:3000/api/project-lead/search?query=${query || ''}`;
+            const url = `${API_BASE_URL}/api/project-lead/search?query=${query || `'}`;
             const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
             if (res.ok) setSearchResults(await res.json());
         } catch (error) { console.error("Search Error", error); }
@@ -106,7 +107,7 @@ const ProjectLeadDashboard = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/project-lead/invite', {
+            const res = await fetch(`${API_BASE_URL}/api/project-lead/invite`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ userId, projectId: projectIdToInvite })
@@ -114,11 +115,11 @@ const ProjectLeadDashboard = () => {
 
             if (res.ok) {
                 // Refresh data
-                const teamRes = await fetch(`http://localhost:3000/api/project-lead/team?projectId=${selectedProjectId || projectIdToInvite}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const teamRes = await fetch(`${API_BASE_URL}/api/project-lead/team?projectId=${selectedProjectId || projectIdToInvite}`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (teamRes.ok) setTeam(await teamRes.json());
 
                 // Refresh projects to update member count
-                const projectsRes = await fetch('http://localhost:3000/api/project-lead/projects', { headers: { 'Authorization': `Bearer ${token}` } });
+                const projectsRes = await fetch(`${API_BASE_URL}/api/project-lead/projects`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (projectsRes.ok) setProjects(await projectsRes.json());
 
                 setInviteModalOpen(false);
@@ -145,7 +146,7 @@ const ProjectLeadDashboard = () => {
     const handleTaskCreated = async (taskData) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/tasks', {
+            const res = await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(taskData)
@@ -153,7 +154,7 @@ const ProjectLeadDashboard = () => {
 
             if (res.ok) {
                 // Refresh team data to show new task count/workload
-                const teamRes = await fetch('http://localhost:3000/api/project-lead/team', { headers: { 'Authorization': `Bearer ${token}` } });
+                const teamRes = await fetch(`${API_BASE_URL}/api/project-lead/team`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (teamRes.ok) setTeam(await teamRes.json());
 
                 setAssignTaskModalOpen(false);
@@ -422,3 +423,5 @@ const ProjectLeadDashboard = () => {
 };
 
 export default ProjectLeadDashboard;
+
+

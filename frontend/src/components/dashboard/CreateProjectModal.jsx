@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom'; // Import ReactDOM
 import { FaTimes, FaProjectDiagram, FaCheck } from 'react-icons/fa';
@@ -79,7 +80,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
         setIsLoading(true);
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch('http://localhost:3000/api/projects', {
+            const res = await fetch(`${API_BASE_URL}/api/projects`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -217,3 +218,6 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
 };
 
 export default CreateProjectModal;
+
+
+

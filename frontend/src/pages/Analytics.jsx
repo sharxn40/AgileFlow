@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -16,7 +17,7 @@ const Analytics = () => {
         const fetchProjects = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch('http://localhost:3000/api/projects', {
+                const res = await fetch(`${API_BASE_URL}/api/projects`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -45,19 +46,19 @@ const Analytics = () => {
 
             try {
                 // A. Velocity Data
-                const velocityRes = await fetch(`http://localhost:3000/api/sprints/${selectedProjectId}/velocity`, { headers });
+                const velocityRes = await fetch(`${API_BASE_URL}/api/sprints/${selectedProjectId}/velocity`, { headers });
                 if (velocityRes.ok) {
                     const vData = await velocityRes.json();
                     setVelocityData(vData);
                 }
 
                 // B. Active Sprint & Burndown
-                const activeRes = await fetch(`http://localhost:3000/api/sprints/active?projectId=${selectedProjectId}`, { headers });
+                const activeRes = await fetch(`${API_BASE_URL}/api/sprints/active?projectId=${selectedProjectId}`, { headers });
                 if (activeRes.ok) {
                     const sprint = await activeRes.json();
                     if (sprint) {
                         setActiveSprint(sprint);
-                        const burndownRes = await fetch(`http://localhost:3000/api/sprints/${sprint.id}/burndown`, { headers });
+                        const burndownRes = await fetch(`${API_BASE_URL}/api/sprints/${sprint.id}/burndown`, { headers });
                         if (burndownRes.ok) {
                             const bData = await burndownRes.json();
                             setBurndownData(bData);
@@ -69,7 +70,7 @@ const Analytics = () => {
                 }
 
                 // C. Recent Activity
-                const activityRes = await fetch(`http://localhost:3000/api/projects/${selectedProjectId}/activity`, { headers });
+                const activityRes = await fetch(`${API_BASE_URL}/api/projects/${selectedProjectId}/activity`, { headers });
                 if (activityRes.ok) {
                     const aData = await activityRes.json();
                     setActivityData(aData);
@@ -276,3 +277,5 @@ const Analytics = () => {
 };
 
 export default Analytics;
+
+

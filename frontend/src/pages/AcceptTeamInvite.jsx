@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaUsers, FaBriefcase, FaMoneyBillWave, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
@@ -18,7 +19,7 @@ const AcceptTeamInvite = () => {
 
     const fetchOfferDetails = async () => {
         try {
-            const res = await fetch(`http://localhost:3000/api/teams/invite/${token}`);
+            const res = await fetch(`${API_BASE_URL}/api/teams/invite/${token}`);
             const data = await res.json();
 
             if (res.ok) {
@@ -52,7 +53,7 @@ const AcceptTeamInvite = () => {
     const processAcceptance = async () => {
         setStatus('accepting');
         try {
-            const res = await fetch(`http://localhost:3000/api/teams/accept-invite/${token}`, {
+            const res = await fetch(`${API_BASE_URL}/api/teams/accept-invite/${token}`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${authToken}` }
             });
@@ -170,3 +171,5 @@ const AcceptTeamInvite = () => {
 };
 
 export default AcceptTeamInvite;
+
+

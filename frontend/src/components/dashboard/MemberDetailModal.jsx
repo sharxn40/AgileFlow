@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaChartPie, FaCalendarAlt, FaTasks, FaExclamationTriangle } from 'react-icons/fa';
@@ -18,7 +19,7 @@ const MemberDetailModal = ({ isOpen, onClose, userId, leadToken, onAssignTask })
     const fetchDetails = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:3000/api/project-lead/user-details/${userId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/project-lead/user-details/${userId}`, {
                 headers: { 'Authorization': `Bearer ${leadToken}` }
             });
             if (res.ok) {
@@ -33,7 +34,7 @@ const MemberDetailModal = ({ isOpen, onClose, userId, leadToken, onAssignTask })
 
     const handleUpdateTask = async (taskId, updates) => {
         try {
-            await fetch(`http://localhost:3000/api/project-lead/tasks/${taskId}/update`, {
+            await fetch(`${API_BASE_URL}/api/project-lead/tasks/${taskId}/update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -179,3 +180,6 @@ const MemberDetailModal = ({ isOpen, onClose, userId, leadToken, onAssignTask })
 };
 
 export default MemberDetailModal;
+
+
+

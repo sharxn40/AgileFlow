@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../config.js';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaTrash, FaUsers, FaChartLine, FaServer, FaSearch, FaEdit, FaUserCog } from 'react-icons/fa';
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/users', {
+            const response = await fetch(`${API_BASE_URL}/api/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) throw new Error('Failed to fetch users');
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
     const fetchPayments = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/payments/all', {
+            const response = await fetch(`${API_BASE_URL}/api/payments/all`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -80,7 +81,7 @@ const AdminDashboard = () => {
         // Confirmation handled by modal
         try {
             const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/users/${id}`, {
+            await fetch(`${API_BASE_URL}/api/users/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -94,7 +95,7 @@ const AdminDashboard = () => {
         try {
             console.log(`AdminDashboard: Updating user ${id} to role ${newRole}`); // DEBUG
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/users/${id}/role`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/${id}/role`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -472,3 +473,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+

@@ -1,3 +1,4 @@
+﻿import API_BASE_URL from '../../config.js';
 import React, { useState, useEffect } from 'react';
 import './PaymentApproval.css';
 
@@ -20,7 +21,7 @@ const PaymentApproval = ({ projectId }) => {
     const fetchPendingTasks = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3000/api/issues?projectId=${projectId}&status=Done`, {
+            const res = await fetch(`${API_BASE_URL}/api/issues?projectId=${projectId}&status=Done`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -39,7 +40,7 @@ const PaymentApproval = ({ projectId }) => {
 
         try {
             // 1. Create Order
-            const orderRes = await fetch('http://localhost:3000/api/payments/pay', {
+            const orderRes = await fetch(`${API_BASE_URL}/api/payments/pay`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ const PaymentApproval = ({ projectId }) => {
                 handler: async function (response) {
                     // 3. Verify Payment
                     try {
-                        const verifyRes = await fetch('http://localhost:3000/api/payments/verify', {
+                        const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -154,3 +155,6 @@ const PaymentApproval = ({ projectId }) => {
 };
 
 export default PaymentApproval;
+
+
+
