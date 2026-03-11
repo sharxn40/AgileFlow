@@ -24,6 +24,7 @@ const AuthPage = () => {
     const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     useEffect(() => {
+        setError(''); // Clear any stale errors on page load
         if (location.pathname === '/register') {
             setIsSignUp(true);
         } else {
