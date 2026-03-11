@@ -17,6 +17,9 @@ COPY . .
 # Cloud Run will set PORT automatically via environment variable
 ENV PORT=8080
 
+# Tell firebase-admin to use the service account key file in the container
+ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/src/app/serviceAccountKey.json
+
 # Expose the port
 EXPOSE 8080
 
