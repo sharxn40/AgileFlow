@@ -1,4 +1,4 @@
-﻿import API_BASE_URL from '../config.js';
+import API_BASE_URL from '../config.js';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -24,7 +24,6 @@ const AuthPage = () => {
     const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     useEffect(() => {
-        setError(''); // Clear any stale errors on page load
         if (location.pathname === '/register') {
             setIsSignUp(true);
         } else {
