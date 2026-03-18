@@ -2,28 +2,49 @@ const admin = require('firebase-admin');
 const path = require('path');
 const fs = require('fs');
 
-const serviceAccountPath = path.join(__dirname, '../serviceAccountKey.json');
+let initialized = false;
 
-if (fs.existsSync(serviceAccountPath)) {
+// Priority 1: FIREBASE_CREDENTIALS env variable (set in Cloud Run)
+if (process.env.FIREBASE_CREDENTIALS) {
     try {
-        const serviceAccount = require(serviceAccountPath);
+        const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
         });
-        console.log("🔥 Firebase Admin Initialized via local JSON");
+        console.log("🔥 Firebase Admin Initialized via FIREBASE_CREDENTIALS env var");
+        initialized = true;
     } catch (error) {
-        console.error("❌ Firebase Admin Local Init Failed:", error.message);
+        console.error("❌ Firebase Admin env var init failed:", error.message);
     }
-} else {
-    // If no local key, try to use default credentials (standard for Cloud Run/GCP)
+}
+
+// Priority 2: Local serviceAccountKey.json (for local development)
+if (!initialized) {
+    const serviceAccountPath = path.join(__dirname, '../serviceAccountKey.json');
+    if (fs.existsSync(serviceAccountPath)) {
+        try {
+            const serviceAccount = require(serviceAccountPath);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount)
+            });
+            console.log("🔥 Firebase Admin Initialized via local serviceAccountKey.json");
+            initialized = true;
+        } catch (error) {
+            console.error("❌ Firebase Admin local JSON init failed:", error.message);
+        }
+    }
+}
+
+// Priority 3: GCP Application Default Credentials (fallback)
+if (!initialized) {
     try {
         admin.initializeApp({
             credential: admin.credential.applicationDefault()
         });
         console.log("🔥 Firebase Admin Initialized via GCP Application Default Credentials");
+        initialized = true;
     } catch (error) {
-        console.error("❌ Firebase Admin Default Init Failed!");
-        console.error("Error:", error.message);
+        console.error("❌ Firebase Admin ALL init methods failed!", error.message);
     }
 }
 

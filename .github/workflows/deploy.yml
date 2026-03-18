@@ -54,6 +54,7 @@ jobs:
           --set-env-vars "EMAIL_PASS=${{ secrets.EMAIL_PASS }}"
           --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}"
           --set-env-vars "RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}"
+          --set-env-vars "FIREBASE_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           --project agileflow-56
 
   # ──────────────────────────────────────────────
