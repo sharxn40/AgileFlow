@@ -4,8 +4,24 @@ const fs = require('fs');
 
 let initialized = false;
 
-// Priority 1: FIREBASE_CREDENTIALS env variable (set in Cloud Run)
-if (process.env.FIREBASE_CREDENTIALS) {
+// Priority 1: FIREBASE_CREDENTIALS_B64 env variable (base64-encoded JSON, safe for Cloud Run)
+if (process.env.FIREBASE_CREDENTIALS_B64) {
+    try {
+        const serviceAccount = JSON.parse(
+            Buffer.from(process.env.FIREBASE_CREDENTIALS_B64, 'base64').toString('utf8')
+        );
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log("🔥 Firebase Admin Initialized via FIREBASE_CREDENTIALS_B64 env var");
+        initialized = true;
+    } catch (error) {
+        console.error("❌ Firebase Admin base64 env var init failed:", error.message);
+    }
+}
+
+// Priority 2: FIREBASE_CREDENTIALS env variable (raw JSON)
+if (!initialized && process.env.FIREBASE_CREDENTIALS) {
     try {
         const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
         admin.initializeApp({
