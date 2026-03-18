@@ -1,132 +1,59 @@
 const User = require('../models/firestore/User');
-// const Project = require('../models/Project'); // Legacy
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET || 'secret_key', {
-        expiresIn: '30d',
-    });
-};
-
-exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
-    try {
-        let user = await User.findOne({ where: { email } });
-        if (user) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user = await User.create({
-            username,
-            email,
-            password: hashedPassword,
-        });
-        res.status(201).json({
-            user: {
-                _id: user.id,
-                username: user.username,
-                email: user.email,
-            },
-            token: generateToken(user.id),
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
-exports.login = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ where: { email } });
-        if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({
-                user: {
-                    _id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    role: user.role, // Include role in response
-                },
-                token: generateToken(user.id),
-            });
-            console.log(`User ${email} logged in with role: ${user.role}`); // DEBUG
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
 const { admin } = require('../config/firebaseAdmin');
 
-exports.googleLogin = async (req, res) => {
-    const { token, userInfo } = req.body;
+/**
+ * Sync user profile from Firebase to our Firestore metadata
+ * Called by frontend AFTER successful Firebase Auth
+ */
+exports.syncUser = async (req, res) => {
+    const { token } = req.body;
 
     try {
-        console.log("DEBUG: Starting googleLogin");
+        // Verify token again just to be safe
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        const { email, name, uid, picture } = decodedToken;
 
-        if (!userInfo || !userInfo.email) {
-            return res.status(400).json({ message: 'Missing user info from Google Login payload' });
-        }
-
-        const email = userInfo.email;
-        const name = userInfo.name || email.split('@')[0];
-        const googleId = userInfo.sub;
-        const photoURL = userInfo.picture;
-        console.log("DEBUG: Using userInfo payload for", email);
-
-        // Login or Create User (Firestore)
-        console.log("DEBUG: Querying User.findOne for", email);
-        let user = await User.findOne({ where: { email } });
+        // Check if user exists in Firestore
+        let user = await User.findByEmail(email);
 
         if (!user) {
-            user = await User.create({
-                username: name,
-                email,
-                password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
-                googleId,
-                profilePicture: photoURL
+            // Auto-create user metadata if not exists
+            const newUser = await User.create({
+                username: name || email.split('@')[0],
+                email: email,
+                role: 'user', // Default role
+                firebaseUid: uid,
+                profilePicture: picture || ''
             });
+            user = newUser;
+            console.log(`Synced new user: ${email}`);
         } else {
-            if (photoURL && user.profilePicture !== photoURL && user.id) {
-                await User.collection.doc(user.id).update({ profilePicture: photoURL });
-                user.profilePicture = photoURL;
+            // Update existing user if needed (e.g. sync profile picture)
+            if (picture && user.profilePicture !== picture) {
+                await User.collection.doc(user.id).update({ profilePicture: picture });
+                user.profilePicture = picture;
             }
         }
 
-        res.json({
+        res.status(200).json({
+            message: 'User synced successfully',
             user: {
-                _id: user.id,
+                id: user.id,
                 username: user.username,
                 email: user.email,
-                picture: user.profilePicture,
-                role: user.role
-            },
-            token: generateToken(user.id)
+                role: user.role,
+                picture: user.profilePicture
+            }
         });
-        console.log("DEBUG: Finished googleLogin successfully");
-
     } catch (error) {
-        console.error("Google Auth Verification Error:", error.message, error.code);
-        try {
-            const fs = require('fs');
-            fs.writeFileSync('auth_error.log', `Error: ${error.message}\nStack: ${error.stack}\nToken: ${token ? token.substring(0, 20) + '...' : 'None'}`);
-        } catch (filesErr) { console.error('Failed to write log', filesErr); }
-
-        // Differentiate between generic auth errors and database connection failures
-        if (error.code === 16 || error.message.includes('UNAUTHENTICATED') || error.message.includes('Firestore')) {
-            return res.status(500).json({ message: 'Database connection error during login', details: error.message });
-        }
-
-        res.status(401).json({ message: 'Google Auth Failed', details: error.message });
+        console.error("Firebase Sync Error:", error.message);
+        res.status(500).json({ message: 'Failed to sync user', error: error.message });
     }
 };
 
-exports.forgotPassword = async (req, res) => {
-    res.status(200).json({ message: 'Password reset link sent (Mock)' });
-};
-
-exports.resetPassword = async (req, res) => {
-    res.status(200).json({ message: 'Password reset successful (Mock)' });
-};
+// Legacy stubs for compatibility if other routes refer to them
+exports.register = (req, res) => res.status(410).json({ message: 'Endpoint deprecated. Use Firebase SDK.' });
+exports.login = (req, res) => res.status(410).json({ message: 'Endpoint deprecated. Use Firebase SDK.' });
+exports.googleLogin = (req, res) => res.status(410).json({ message: 'Endpoint deprecated. Use Firebase SDK.' });
+exports.forgotPassword = (req, res) => res.status(410).json({ message: 'Use Firebase Auth SDK directly.' });
+exports.resetPassword = (req, res) => res.status(410).json({ message: 'Use Firebase Auth SDK directly.' });

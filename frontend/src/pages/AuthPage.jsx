@@ -4,6 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { auth, googleProvider } from '../firebase';
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    signInWithPopup, 
+    updateProfile 
+} from 'firebase/auth';
 import './Auth.css';
 
 const AuthPage = () => {
@@ -38,85 +45,77 @@ const AuthPage = () => {
         window.history.pushState(null, '', mode ? '/register' : '/login');
     };
 
+    // --- Sync User metadata with Backend ---
+    const syncWithBackend = async (firebaseUser, idToken) => {
+        const syncRes = await fetch(`${API_BASE_URL}/api/auth/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: idToken }),
+        });
+        const syncData = await syncRes.json();
+        if (syncRes.ok) {
+            login(syncData.user, idToken);
+            if (rememberMe) localStorage.setItem('rememberbox', 'true');
+            if (syncData.user.role === 'admin') navigate('/admin');
+            else navigate('/dashboard');
+        } else {
+            setError(syncData.message || 'Failed to sync user data');
+        }
+    };
+
     // --- API Handlers ---
     const handleLoginChange = (e) => setLoginData({ ...loginData, [e.target.name]: e.target.value });
     const handleRegisterChange = (e) => setRegisterData({ ...registerData, [e.target.name]: e.target.value });
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(loginData),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                login(data.user, data.token);
-                if (rememberMe) localStorage.setItem('rememberbox', 'true');
-                if (data.user.role === 'admin') navigate('/admin');
-                else navigate('/dashboard');
-            } else { setError(data.message); }
-        } catch (err) { setError('Failed to connect to server'); }
+            // 1. Firebase Auth
+            const userCredential = await signInWithEmailAndPassword(auth, loginData.email, loginData.password);
+            const idToken = await userCredential.user.getIdToken();
+            
+            // 2. Sync with Backend
+            await syncWithBackend(userCredential.user, idToken);
+        } catch (err) {
+            console.error("Login Error:", err);
+            setError(err.message.includes('auth/invalid-credential') ? 'Invalid email or password' : err.message);
+        }
     };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         if (registerData.password !== registerData.confirmPassword) {
             setError("Passwords do not match!");
             return;
         }
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: registerData.username,
-                    email: registerData.email,
-                    password: registerData.password,
-                    role: registerData.role
-                }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                login(data.user, data.token);
-                navigate('/dashboard');
-            } else { setError(data.message); }
-        } catch (err) { setError('Failed to connect to server'); }
+            // 1. Firebase Auth Register
+            const userCredential = await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
+            await updateProfile(userCredential.user, { displayName: registerData.username });
+            const idToken = await userCredential.user.getIdToken();
+            
+            // 2. Sync with Backend
+            await syncWithBackend(userCredential.user, idToken);
+        } catch (err) {
+            console.error("Register Error:", err);
+            setError(err.message);
+        }
     };
 
-    // Real Google OAuth — always shows account picker
-    const handleGoogleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            try {
-                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-                });
-                const userInfo = await userInfoRes.json();
-
-                const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: tokenResponse.access_token, userInfo }),
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    login(data.user, data.token);
-                    if (data.user.role === 'admin') navigate('/admin');
-                    else navigate('/dashboard');
-                } else {
-                    setError(data.message || 'Google Login Failed');
-                }
-            } catch (err) {
-                console.error("AuthPage Connection Error:", err);
-                setError(`Failed to connect to backend at ${API_BASE_URL}. Error: ${err.message}`);
-            }
-        },
-        onError: () => setError('Google Login Failed. Please try again.'),
-        prompt: 'select_account',
-        flow: 'implicit',
-    });
+    // Real Google OAuth via Firebase
+    const handleGoogleLogin = async () => {
+        setError('');
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const idToken = await result.user.getIdToken();
+            await syncWithBackend(result.user, idToken);
+        } catch (err) {
+            console.error("Google Auth Error:", err);
+            setError(err.message);
+        }
+    };
 
     return (
         <div className="auth-body">
@@ -248,7 +247,7 @@ const AuthPage = () => {
                         <div className="social-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                             <button
                                 type="button"
-                                onClick={() => handleGoogleLogin()}
+                                onClick={handleGoogleLogin}
                                 className="google-btn"
                                 style={{
                                     display: 'flex',

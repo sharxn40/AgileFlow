@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const AuthContext = createContext(null);
 
@@ -8,23 +10,29 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Initialize Auth State from LocalStorage
+    // Listen to Firebase Auth state for auto token refresh
     useEffect(() => {
-        const initAuth = () => {
-            try {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Get fresh ID token (Firebase handles refresh automatically)
+                const idToken = await firebaseUser.getIdToken();
+                localStorage.setItem('token', idToken);
+
+                // Restore user metadata from localStorage (set during sync)
                 const storedUser = localStorage.getItem('user');
-                const storedToken = localStorage.getItem('token');
-                if (storedUser && storedToken) {
+                if (storedUser) {
                     setUser(JSON.parse(storedUser));
                 }
-            } catch (error) {
-                console.error("Auth init failed", error);
-                localStorage.clear();
-            } finally {
-                setLoading(false);
+            } else {
+                // User signed out
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                setUser(null);
             }
-        };
-        initAuth();
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     const login = (userData, token) => {
@@ -33,7 +41,8 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        await auth.signOut();
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         setUser(null);
@@ -42,7 +51,13 @@ export const AuthProvider = ({ children }) => {
 
     // Enhanced Fetch Wrapper that handles 401
     const authFetch = useCallback(async (url, options = {}) => {
-        const token = localStorage.getItem('token');
+        // Always get fresh token from Firebase
+        let token = localStorage.getItem('token');
+        if (auth.currentUser) {
+            token = await auth.currentUser.getIdToken();
+            localStorage.setItem('token', token);
+        }
+
         const headers = {
             ...options.headers,
             'Authorization': token ? `Bearer ${token}` : '',
@@ -53,10 +68,9 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(url, { ...options, headers });
 
             if (response.status === 401) {
-                // Token expired or invalid
                 console.warn("Session expired. Logging out.");
                 logout();
-                return response; // Caller handles the rest, but user is redirected
+                return response;
             }
 
             return response;

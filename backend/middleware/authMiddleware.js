@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/firestore/User'); // Updated to Firestore
+const { admin } = require('../config/firebaseAdmin');
+const User = require('../models/firestore/User');
 
 const protect = async (req, res, next) => {
     let token;
@@ -7,20 +7,25 @@ const protect = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
-
-            // Firestore findByPk returns a plain object, not a Sequelize instance
-            const user = await User.findByPk(decoded.id);
+            
+            // Verify Firebase ID Token
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            
+            // Firebase token has 'uid' which matches our 'id' in Firestore (if synced correctly)
+            // or we use email to find the user in our Firestore metadata collection.
+            let user = await User.findByEmail(decodedToken.email);
 
             if (!user) {
-                return res.status(401).json({ message: 'Not authorized, user not found' });
+                // If user doesn't exist in Firestore yet (but is in Firebase Auth),
+                // we might want to fail or auto-create. For now, fail with specific message.
+                return res.status(401).json({ message: 'User metadata not initialized' });
             }
 
             // Attach user to request
             req.user = user;
             next();
         } catch (error) {
-            console.error(error);
+            console.error("Auth Middleware Error:", error.message);
             res.status(401).json({ message: 'Not authorized, token failed', error: error.message });
         }
     } else {
@@ -30,9 +35,7 @@ const protect = async (req, res, next) => {
 
 const authorize = (...roles) => {
     return (req, res, next) => {
-        console.log(`Auth Middleware: Checking User. User: ${req.user ? req.user.email : 'None'}, Role: ${req.user ? req.user.role : 'None'}, Required: ${roles}`); // DEBUG
         if (!req.user || !roles.includes(req.user.role)) {
-            console.log('Auth Middleware: Access Denied');
             return res.status(403).json({
                 message: `User role ${req.user ? req.user.role : 'unknown'} is not authorized to access this route`
             });
