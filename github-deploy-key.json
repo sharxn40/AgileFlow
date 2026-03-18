@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "agileflow-56",
+  "private_key_id": "15ba377be6cdc6aa6c2cff2f0c6e716755b6d869",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDSyS+ovlagApAt\n8+VXdKF2UCNyOfupRAeebpRCGzUshlnt3hEE3r/zF+NFrdDFyCafbXNdl+u23wcA\ngrFHGbsGKja5oztYpymJDCrp7dgHapDnOHXZ4PuHIUh/uwE1CZBpgOrHKUMcYwdr\nPSvAuV+ufWu1O7pEnzcHEVDAIAesU9ADX+cl0nBlBzniDQl13fZeoxOsjgJYLrPO\no/50wn1Fg8CCH228sgSrsbAZk0cILjblStwqzz9tbCq9yCGykFSeFS6k4OW4LFr2\n0j5PJX9fIkYUkyrwf7EtVy+clguwJNuhZzn0YhUXjBfUGqoB08h7gzdEbGZUE7Jh\nhguead2LAgMBAAECggEACxw/pUCJhsJooLaljm6MJ2HuyStbo7H9ezePT2ZPvAES\nf5wGgAZqgU28O2syze022/Odv3+UFReJLvKBYm+gxAc4yznA+9mtZTCwmMcvBw6l\nUXEdOFbIUavkPmQempHefGRaYhUMTIeLvim2dkbotctpzSu3Lb0wRIpNHCAtrcLE\nsjuo8J2pl6tJnLflf9aalFZd+awNWdYhHopu+XbHIX7bfvDtKNoDlpiQcUR8K4Lx\n23YA2ls4WUAv5bAzO2A7p8cJuWmla1AbvUnANjuylZXqdnPOpwfy/lesqvRnOGpF\n8y0mCVdMQpgf/71WDZXw7hrp3Jig7HwMHuXLlFs7AQKBgQDogCjoNwSxSf+NDQSD\niISO7+jGjZkiKv8ZuifUlnj1PbhIuogWJXW3EFwv0iA8LjAwU1xB4M1NBPVgfyPt\nq9wdEJXZPUO0TxHEm2Hz95wQBo2HFYOg/PeqLen6ebXm1hnKOQb1nyOtCiwJb2PG\nXdCqFI+NS89jfzR35K+53eB+0QKBgQDoFysFnJ4I7/td+vvKPr4DI3tnj1Uccx+c\n0Rvyj7iXMAWN/1lC8h/A7vnqRD0LU3ohP6cFNzVTbO4bvlZ4LZOQAflaWfcogXnf\nPFI9TNALSyUqN/xOsP8pgroOpGWdcIVR3Q9PWoo769mFNslugsC1hUJH1CUy1J9F\nxWF1o5MFmwKBgAOEBJpWUqTXqJyaaMoQY2jB6fQuqfUhT1A1R2roh5W1xDadU3d6\nQ4hsH+i9Na2TSTlB2XBJlPEoNQmrgoCSi7aIzKtHSOHOHEerzdRhlyOK5dL4GVBy\n4s/Y9+PIuV5vOF6ddCR8ro5sS/Qskgaq3n/j5bPORKmNf96cP6gA2ecxAoGAHNdE\nMV5VBSdNRVB7GZbSZfFy1FurZ+2mcAZMQsg5WBBPoGWq4fbUm1UXGVWBgHbPJnKS\nfsNtjQBsVmZAuI5xV+Pm6KNlY1MzodoNHjD9aWndJHHwmJbGHpJwLIGhXv8skg+2\nZ1YI94lHbpZwUZtN90CoC+UA+mARqsnsYoIBMyECgYBVBLcYoxnDVLrSnMLSrmW8\n87/gxqX4QpjmEPXk/un1dNI73xwJPGFFbc/vqFEQ1NepIXZ+thJ6GSUWPDrc2bmT\nW0Ii1VSwOn2/JOU+1y9H0BF3UTysGXn6wku7V/Gv8MG/luBoH4XThH0t2+4dH9wH\nVnWR6jDTPlbPbiDiBJsaYQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "github-actions-deploy@agileflow-56.iam.gserviceaccount.com",
+  "client_id": "100098674297481616124",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-actions-deploy%40agileflow-56.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
