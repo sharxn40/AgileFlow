@@ -25,13 +25,12 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Configure Docker for GCR
-        run: gcloud auth configure-docker
 
-      - name: Build & Push Docker Image
+      - name: Build & Push Docker Image via Cloud Build
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }} ./backend
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }}
+          gcloud builds submit ./backend \
+            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }} \
+            --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Deploy to Cloud Run
         run: |
