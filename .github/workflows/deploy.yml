@@ -10,7 +10,7 @@ jobs:
   # JOB 1: Deploy Backend → Google Cloud Run
   # ──────────────────────────────────────────────
   deploy-backend:
-    name: 🚀 Deploy Backend to Cloud Run
+    name: Deploy Backend to Cloud Run
     runs-on: ubuntu-latest
 
     steps:
@@ -25,47 +25,41 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Login to Google Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Build & Push Docker Image via Cloud Build
-        run: |
-          BUILD_ID=$(gcloud builds submit ./backend --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }} --project ${{ secrets.GCP_PROJECT_ID }} --async --format='value(id)')
-          echo "Build submitted: $BUILD_ID"
-
-          while true; do
-            STATUS=$(gcloud builds describe $BUILD_ID --project ${{ secrets.GCP_PROJECT_ID }} --format='value(status)')
-            echo "Build status: $STATUS"
-            if [ "$STATUS" = "SUCCESS" ]; then
-              echo "Build succeeded"
-              break
-            elif [ "$STATUS" = "FAILURE" ] || [ "$STATUS" = "CANCELLED" ] || [ "$STATUS" = "TIMEOUT" ]; then
-              echo "Build failed: $STATUS"
-              exit 1
-            fi
-            sleep 15
-          done
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }}
 
       - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy agileflow-backend \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }} \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
-            --set-env-vars "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" \
-            --set-env-vars "EMAIL_USER=${{ secrets.EMAIL_USER }}" \
-            --set-env-vars "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" \
-            --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}" \
-            --set-env-vars "RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}" \
-            --project ${{ secrets.GCP_PROJECT_ID }}
+        run: >
+          gcloud run deploy agileflow-backend
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/agileflow-backend:${{ github.sha }}
+          --platform managed
+          --region us-central1
+          --allow-unauthenticated
+          --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+          --set-env-vars "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}"
+          --set-env-vars "EMAIL_USER=${{ secrets.EMAIL_USER }}"
+          --set-env-vars "EMAIL_PASS=${{ secrets.EMAIL_PASS }}"
+          --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}"
+          --set-env-vars "RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}"
+          --project ${{ secrets.GCP_PROJECT_ID }}
 
   # ──────────────────────────────────────────────
   # JOB 2: Deploy Frontend → Firebase Hosting
   # ──────────────────────────────────────────────
   deploy-frontend:
-    name: 🌐 Deploy Frontend to Firebase Hosting
+    name: Deploy Frontend to Firebase Hosting
     runs-on: ubuntu-latest
-    # Wait for backend to deploy successfully first
     needs: deploy-backend
 
     steps:
@@ -87,7 +81,6 @@ jobs:
         run: npm run build
         working-directory: frontend
         env:
-          # This ensures the production Cloud Run URL is baked into the build
           VITE_API_BASE_URL: https://agileflow-backend-768310526834.us-central1.run.app
 
       - name: Deploy to Firebase Hosting
