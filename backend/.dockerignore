@@ -6,3 +6,4 @@ npm-debug.log
 database.sqlite
 .git
 .gitignore
+serviceAccountKey.json
