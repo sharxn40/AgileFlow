@@ -24,6 +24,7 @@ class User {
         // Return object with 'id' and data to match Sequelize structure
         return {
             id: doc.id,
+            _id: doc.id,
             ...data,
             save: async function () {
                 // Mock instance .save()
@@ -36,14 +37,14 @@ class User {
         if (!id) return null;
         const doc = await User.collection.doc(id).get();
         if (!doc.exists) return null;
-        return { id: doc.id, ...doc.data() };
+        return { id: doc.id, _id: doc.id, ...doc.data() };
     }
 
     static async findByEmail(email) {
         const snapshot = await User.collection.where('email', '==', email).limit(1).get();
         if (snapshot.empty) return null;
         const doc = snapshot.docs[0];
-        return { id: doc.id, ...doc.data() };
+        return { id: doc.id, _id: doc.id, ...doc.data() };
     }
 
     static async create(userData) {
@@ -63,6 +64,7 @@ class User {
 
         return {
             id: res.id,
+            _id: res.id,
             ...data
         };
     }
@@ -81,6 +83,7 @@ class User {
         console.log(`User.findAll: Snapshot size: ${snapshot.size}`); // DEBUG
         return snapshot.docs.map(doc => ({
             id: doc.id,
+            _id: doc.id,
             ...doc.data()
         }));
     }

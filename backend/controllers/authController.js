@@ -39,6 +39,7 @@ exports.syncUser = async (req, res) => {
             message: 'User synced successfully',
             user: {
                 id: user.id,
+                _id: user.id,
                 username: user.username,
                 email: user.email,
                 role: user.role,

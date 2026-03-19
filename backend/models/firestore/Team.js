@@ -14,14 +14,14 @@ class Team {
             updatedAt: now,
         };
         const res = await Team.collection.add(data);
-        return { id: res.id, ...data };
+        return { id: res.id, _id: res.id, ...data };
     }
 
     static async findByPk(id) {
         if (!id) return null;
         const doc = await Team.collection.doc(id).get();
         if (!doc.exists) return null;
-        return { id: doc.id, ...doc.data() };
+        return { id: doc.id, _id: doc.id, ...doc.data() };
     }
 
     static async findAll(query = {}) {
@@ -32,7 +32,7 @@ class Team {
             }
         }
         const snapshot = await localQuery.get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return snapshot.docs.map(doc => ({ id: doc.id, _id: doc.id, ...doc.data() }));
     }
 
     static async update(id, updates) {
@@ -40,7 +40,7 @@ class Team {
             ...updates,
             updatedAt: new Date().toISOString(),
         });
-        return { id, ...updates };
+        return { id, _id: id, ...updates };
     }
 
     static async addMember(teamId, userId) {

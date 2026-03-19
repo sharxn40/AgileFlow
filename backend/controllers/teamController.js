@@ -46,6 +46,7 @@ exports.getMyTeams = async (req, res) => {
                     ...team,
                     memberProfiles: memberProfiles.filter(Boolean).map(u => ({
                         id: u.id,
+                        _id: u.id,
                         username: u.username,
                         email: u.email,
                         profilePicture: u.profilePicture || null,
@@ -77,6 +78,7 @@ exports.getTeamById = async (req, res) => {
             ...team,
             memberProfiles: memberProfiles.filter(Boolean).map(u => ({
                 id: u.id,
+                _id: u.id,
                 username: u.username,
                 email: u.email,
                 profilePicture: u.profilePicture || null,
