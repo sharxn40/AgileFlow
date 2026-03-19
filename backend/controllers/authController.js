@@ -9,6 +9,17 @@ exports.syncUser = async (req, res) => {
     const { token } = req.body;
 
     try {
+        // Diagnostic: Decode token without verification to see what project it belongs to
+        try {
+            const tokenParts = token.split('.');
+            if (tokenParts.length === 3) {
+                const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+                console.log("Token Project ID (aud):", payload.aud);
+            }
+        } catch (e) {
+            console.error("Diagnostic Decode Failed:", e.message);
+        }
+
         // Verify token again just to be safe
         const decodedToken = await admin.auth().verifyIdToken(token);
         const { email, name, uid, picture } = decodedToken;
