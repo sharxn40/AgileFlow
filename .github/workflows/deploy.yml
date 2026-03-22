@@ -55,6 +55,7 @@ jobs:
           --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}"
           --set-env-vars "RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}"
           --set-env-vars "FIREBASE_CREDENTIALS_B64=${{ secrets.FIREBASE_CREDENTIALS_B64 }}"
+          --set-env-vars "FRONTEND_URL=https://agileflow-56.web.app"
           --project agileflow-56
 
   # ──────────────────────────────────────────────
