@@ -41,8 +41,7 @@ exports.inviteUser = async (req, res) => {
         const existingUser = await User.findByEmail(email);
         console.log(`[Inviter] User found? ${!!existingUser} (ID: ${existingUser?.id})`);
 
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-        const inviteUrl = `${frontendUrl}/accept-invite/${token}`;
+        const inviteUrl = `http://localhost:5173/accept-invite/${token}`;
 
         if (existingUser) {
             console.log('[Inviter] Creating in-app notification...');

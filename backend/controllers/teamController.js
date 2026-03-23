@@ -140,8 +140,7 @@ exports.inviteToTeam = async (req, res) => {
         const invitation = await TeamInvitation.create({ teamId, inviteeEmail: email, jobDescription, paymentAmount });
 
         // In production, send an email here. For now, return the token for the frontend to use.
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-        const inviteLink = `${frontendUrl}/accept-team-invite/${invitation.token}`;
+        const inviteLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/accept-team-invite/${invitation.token}`;
         console.log(`TEAM INVITE LINK: ${inviteLink}`); // Log for development
 
         // --- NEW CODE: Create an in-app notification if the user already exists ---
